@@ -50,7 +50,24 @@ export default {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
-  		}
+  		},
+		  container: {
+			center: true, // Centers the container
+			padding: {
+			  DEFAULT: '1rem', // Default padding for all screen sizes
+			  sm: '2rem', // Padding for small screens
+			  lg: '4rem', // Padding for large screens
+			  xl: '5rem', // Padding for extra-large screens
+			  '2xl': '6rem', // Padding for 2xl screens
+			},
+			screens: {
+			  sm: '640px',
+			  md: '768px',
+			  lg: '1024px',
+			  xl: '1280px',
+			  '2xl': '1536px',  
+			},
+		  },
   	}
   },
   plugins: [require("tailwindcss-animate")],
