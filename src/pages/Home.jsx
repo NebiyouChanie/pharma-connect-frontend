@@ -2,6 +2,8 @@ import React from 'react'
 import HeroSection from '../components/HeroSection'
 import aboutusImage from '../assets/aboutUS.png'
 import productDemoIllustration from '../assets/productDemoIllustration.svg'
+import { NearbyCarousel } from '@/components/NearbyCarousel'
+import PharmacyDetail from './pharmacyDetail/PharmacyDetail'
  
 
 function Home() {
@@ -10,6 +12,10 @@ function Home() {
       {/* hero section */}
       <div className="container">
         <HeroSection />
+      </div>
+      <div className="container my-16">
+        <h3 className='text-2xl font-semibold mb-3'>Nearby pharmacies</h3>
+        <NearbyCarousel />
       </div>
 
 
@@ -67,6 +73,7 @@ function Home() {
             </div>
           </div>
       </section>
+      <PharmacyDetail />
     </main>
   )
 }
