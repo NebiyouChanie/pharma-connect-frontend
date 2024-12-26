@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import Logo from "../assets/Logo.svg";
 import navLinksByRole from "../constants/navLinks";
+import { CircleX, Menu } from "lucide-react";
 
 function SideMenu({ role }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +22,7 @@ function SideMenu({ role }) {
             
             <p className="text-primary text-2xl"></p>  
           ) : (
-            <p className="text-primary text-2xl">H</p>  
+            <Menu size={24} color="#286AA7"   />
           )}
         </button>
       </div>
@@ -35,7 +36,7 @@ function SideMenu({ role }) {
         <div className="p-4 flex justify-between items-center border-b border-gray-200">
           <img src={Logo} alt="pharma connect logo" className="h-6" />
           <button onClick={toggleMenu}>
-            <p className="text-primary text-2xl">X</p>  
+            <CircleX size={24} color="#286AA7"   />
           </button>
         </div>
         <nav className="mt-4 text-primary">
