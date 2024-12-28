@@ -1,42 +1,50 @@
-import React, { useEffect, useState } from "react";
-import { columns } from "./Column";
-import { DataTable } from "../../components/ui/data-table";
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 
-function PharmacyDetail() {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        //  API call
-        const response = [
-          {
-            id: "728ed52f",
-            amount: 100,
-            status: "pending",
-            email: "m@example.com",
-          },
-        ];
-        setData(response);
-      } catch (err) {
-        setError("Failed to fetch data");
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, []);
-
+import medicineImage from "../../assets/medicine.png";
+import { Clock } from "lucide-react";
+export default function PharmacyDetail() {
   return (
     <div>
-      <div className="container mx-auto py-10">
-        <DataTable columns={columns} data={data} />
+      <div className="container flex items-center flex-col gap-8 ">
+        <div className="md:w-3/4 mt-8 text-gray-700 md:flex md:justify-center  md:gap-8">
+          <div className="my-7 md:my-0 md:w-2/4">
+            <h3 className="text-2xl md:text-3xl mb-5 font-bold text-black">
+              Lion Pharmacy
+            </h3>
+            <p>Location: Addisu Gebeya</p>
+            <p>Owner: Abebe Kebede</p>
+            <p className="flex items-center gap-4 mb-8">
+              Destance: Around 4.6KM{" "}
+              <p className="flex gap-1 items-center font-semibold">
+                <Clock className="w-4 h-4" />
+                20Min
+              </p>
+            </p>
+          </div>
+          <img
+            src={medicineImage}
+            className="w-full md:w-2/4"
+            alt="medicine name"
+          />
+        </div>
+        <MapContainer
+          center={[51.505, -0.09]}
+          zoom={13}
+          scrollWheelZoom={false}
+          style={{ width: "80%", height: "50vh" }}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <Marker position={[51.505, -0.09]}>
+            <Popup>
+              A pretty CSS3 popup. <br /> Easily customizable.
+            </Popup>
+          </Marker>
+        </MapContainer>
       </div>
     </div>
   );
 }
-
-export default PharmacyDetail;
