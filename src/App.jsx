@@ -7,6 +7,9 @@ import { useState } from "react";
 import AddMedicine from "./pages/addMedicine/AddMedicine";
 import MedicineList from "./pages/medicineList/MedicineList";
 import PharmacyDetail from "./pages/pharmacyDetail/PharmacyDetail";
+import AddMedicineToInventory from "./pages/addMedicineInventory/addMedicineToInventory";
+import UPdatePharmacyProfile from "./pages/UpdatePharmacy/UpdatePharmacyProfile";
+import JoinAsPharmacy from "./pages/JoinAsPharmacy/JoinAsPharmacy";
 
 
 function App() {
@@ -29,10 +32,13 @@ function App() {
         <Route path="/" element={<Home />} />
 
         <Route path="/add-medicine-admin" element={<AddMedicine />} />
+        <Route path="/add-medicine-pharmacist" element={<AddMedicineToInventory />} />
 
         <Route path="/pharmacylist" element={<PharmacyDetail />} />
         
         <Route path="/medicineList" element={<MedicineList />} />
+        <Route path="/update-pharmacy" element={<UPdatePharmacyProfile/>}/>
+        <Route path="/join-as-pharmacy" element={<JoinAsPharmacy/>}/>
       
         {/* other routes*/}
       </Routes>
