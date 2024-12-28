@@ -7,29 +7,59 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import ImageUpload from '../../components/ImageUpload'; // Import the ImageUpload component
 import { Textarea } from '@/components/ui/textarea';
+import { BASE_URL } from "@/lib/utils";
+import {toast} from "react-toastify";
+
+
 
 // Define the validation schema using Zod
 const formSchema = z.object({
-  medicineName: z.string().min(1, "Medicine name is required"),
-  category: z.string().min(1, "Category is required"),
-  description: z.string().min(1, "Description is required"),
-  imageUrl: z.string().min(1, "Please upload an image."),
+ name: z.string().min(1, "Medicine name is required"),
+  description: z.string().min(1, "Category is required"),
+  
+  image: z.string().min(1, "Please upload an image."),
+  category: z.string().min(1, "Description is required"),
 });
 
 function AddMedicine() {
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      medicineName: '',
-      category: '',
+      name: '',
       description: '',
-      imageUrl: ''
+      image: '',
+      category: '',
     }
   });
 
-  const onSubmit = (data) => {
-    console.log(data); // Handle form submission
-  };
+ 
+   const onSubmit = async (data) => {
+      try {
+        const response = await fetch(`${BASE_URL}/medicines`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json', // Correct header for JSON requests
+          },
+          body: JSON.stringify(data), // Send the form data as JSON
+        });
+    
+        if (!response.ok) {
+          // Handle non-2xx status codes
+          const errorData = await response.json();
+          toast.error(`Error: ${errorData.message || "Request failed"}`);
+          console.error("Error Details:", errorData);
+          return;
+        }
+    
+        toast.success("Application Submitted.");
+        console.log("Success:", await response.json()); // Log response if needed
+      } catch (error) {
+        // Handle network or unexpected errors
+        toast.error("Something went wrong. Please try again.");
+        console.error("Error Details:", error);
+      }
+    };
+    
 
   return (
     <div className="container py-16">
@@ -44,7 +74,7 @@ function AddMedicine() {
             {/* Medicine Name */}
             <FormField
               control={form.control}
-              name="medicineName"
+              name="name"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Medicine Name *</FormLabel>
@@ -56,7 +86,6 @@ function AddMedicine() {
               )}
               />
             
-            {/* Medicine Category */}
             <FormField
               control={form.control}
               name="category"
@@ -93,7 +122,7 @@ function AddMedicine() {
             {/* Image Upload */}
             <FormField
               control={form.control}
-              name="imageUrl"
+              name="image"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel></FormLabel>
@@ -104,6 +133,7 @@ function AddMedicine() {
                 </FormItem>
               )}
               />
+              
               </div>
 
           </div>

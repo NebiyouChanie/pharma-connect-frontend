@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import ImageUpload from '../../components/ImageUpload'; // Import the ImageUpload component
 import { Textarea } from '@/components/ui/textarea';
+import { useEffect } from 'react';
+import {toast} from "react-toastify";
+import { BASE_URL } from "@/lib/utils";
+import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
 
 // Define the validation schema using Zod
 const formSchema = z.object({
@@ -25,7 +28,6 @@ const formSchema = z.object({
       .transform((val) => parseFloat(val)) // Transform string to number
       .refine((val) => val >= 0.01, { message: "Price must be at least 0.01" }),
   expiryDate: z.date({ required_error: "Expiry date is required" }),
-  imageUrl: z.string().min(1, "Please upload an image."),
 });
 
   
@@ -38,16 +40,35 @@ function AddMedicineToInventory() {
       quantity: 1,
       price: 100,
       expiryDate: '',
-      imageUrl:''
     }
   });
+
+  const [medicines, setMedicines] = useState([])
+  const [selectedDate, setSelectedDate] = useState(null); 
 
   const onSubmit = (data) => {
     console.log(data); // Handle form submission
   };
-  const [selectedDate, setSelectedDate] = useState(null); // Manage selected date
 
  
+  // Fetch medicines
+  useEffect(() => {
+    const fetchMedicines = async () => {
+      const response = await fetch(`${BASE_URL}/medicines`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',  
+        },
+      });
+      const data = await response.json();
+      setMedicines(data.data); // Set medicines in state
+    };
+
+    fetchMedicines();
+  }, []);
+
+
+  console.log(medicines)
   return (
     <div className="container py-16">
       <h1 className="text-4xl font-bold mb-4">Add Medicine to Inventory</h1>
@@ -66,7 +87,7 @@ function AddMedicineToInventory() {
                 <FormItem>
                   <FormLabel>Medicine Name *</FormLabel>
                   <FormControl>
-                    <Input placeholder="Paracetamol" {...field} />
+                    <DropdownMenu item={medicines}     placeholder="Paracetamol" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -106,24 +127,24 @@ function AddMedicineToInventory() {
 
               {/* expiration date */}
               <FormField
-      control={form.control}
-      name="expirationDate"
-      render={({ field }) => (
-        <FormItem>
-          <FormLabel>Expiration Date *</FormLabel>
-          <FormControl>
-            <DatePicker
-              selected={selectedDate}
-              onChange={(date) => {
-                setSelectedDate(date); // Update local state
-                field.onChange(date); // Update form state
-              }}
-              dateFormat="yyyy-MM-dd" // Set the desired date format
-              placeholderText="Select a date"
-              className="w-full border border-input rounded-md px-3 py-2 text-base"
-            />
-          </FormControl>
-          <FormMessage />
+                control={form.control}
+                name="expirationDate"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expiration Date *</FormLabel>
+                    <FormControl>
+                      <DatePicker
+                        selected={selectedDate}
+                        onChange={(date) => {
+                          setSelectedDate(date); // Update local state
+                          field.onChange(date); // Update form state
+                        }}
+                        dateFormat="yyyy-MM-dd" // Set the desired date format
+                        placeholderText="Select a date"
+                        className="w-full border border-input rounded-md px-3 py-2 text-base"
+                      />
+              </FormControl>
+            <FormMessage />
         </FormItem>
       )}
     />
@@ -133,7 +154,7 @@ function AddMedicineToInventory() {
             <div>
 
             {/* Image Upload */}
-            <FormField
+            {/* <FormField
               control={form.control}
               name="imageUrl"
               render={({ field }) => (
@@ -145,7 +166,7 @@ function AddMedicineToInventory() {
                   <FormMessage />
                 </FormItem>
               )}
-              />
+              /> */}
               </div>
 
           </div>

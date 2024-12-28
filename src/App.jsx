@@ -16,13 +16,24 @@ import ApplicationList from "./pages/ApplicationList/ApplicationList";
 import Pharmacies from "./pages/Pharmacies/Pharmacies";
 import Medicines from "./pages/Medicines/Medicines";
  
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [role, setRole] = useState('user');
 
   return (
     <Router>
+       <ToastContainer 
+        // position="center"
+        // autoClose={5000} // Automatically closes after 5 seconds
+        // hideProgressBar={false} // Shows the progress bar
+        // newestOnTop={false} // Toasts appear at the bottom
+        // closeOnClick={true} // Closes the toast when clicked
+        // rtl={false} // Set to true for right-to-left languages
+        // draggable
+        // pauseOnHover={true} // Pauses the toast when hovered
+       />
       {/* Desktop Navbar */}
       <div className="hidden md:block">
         <Navbar role={role} />
