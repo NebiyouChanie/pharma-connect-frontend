@@ -5,6 +5,9 @@ import Home from "./pages/Home";
 import { useState } from "react";
 import MedicineList from "./pages/medicineList/MedicineList";
 import PharmacyDetail from "./pages/pharmacyDetail/PharmacyDetail";
+import ApplicationList from "./pages/ApplicationList/ApplicationList";
+import Pharmacies from "./pages/Pharmacies/Pharmacies";
+import Medicines from "./pages/Medicines/Medicines";
 
 function App() {
   const [role, setRole] = useState('user');
@@ -28,6 +31,14 @@ function App() {
         <Route path="/pharmacylist" element={<PharmacyDetail />} />
         
         <Route path="/medicineList" element={<MedicineList />} />
+
+        <Route path="/applicationList" element={<ApplicationList />} />
+        <Route path="/pharmacies" element={<Pharmacies />} />
+        <Route path="/medicines" element={<Medicines />} />
+
+        
+
+        
       
         {/* other routes*/}
       </Routes>
