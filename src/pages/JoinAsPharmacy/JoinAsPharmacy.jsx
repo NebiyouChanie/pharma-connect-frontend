@@ -260,44 +260,6 @@ function JoinAsPharmacy() {
                   </FormItem>
                 )}
               />
-
-              {/* Latitude */}
-              <FormField
-                control={form.control}
-                name="latitude"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Latitude *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter latitude"
-                        {...field}
-                        type="number"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              {/* Longitude */}
-              <FormField
-                control={form.control}
-                name="longitude"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Longitude *</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Enter longitude"
-                        {...field}
-                        type="number"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
             <div className="flex flex-col gap-8">
@@ -316,58 +278,64 @@ function JoinAsPharmacy() {
                 )}
               />
 
-              {/* License Image Upload */}
-              <FormField
-                control={form.control}
-                name="licenseImage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>License Image *</FormLabel>
-                    <FormControl>
-                      <ImageUpload onUpload={(url) => field.onChange(url)} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex gap-10">
+                {/* License Image Upload */}
+                <FormField
+                  control={form.control}
+                  name="licenseImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>License Image *</FormLabel>
+                      <FormControl>
+                        <ImageUpload onUpload={(url) => field.onChange(url)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              {/* Pharmacy Image Upload */}
-              <FormField
-                control={form.control}
-                name="pharmacyImage"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Pharmacy Image *</FormLabel>
-                    <FormControl>
-                      <ImageUpload onUpload={(url) => field.onChange(url)} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+                {/* Pharmacy Image Upload */}
+                <FormField
+                  control={form.control}
+                  name="pharmacyImage"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Pharmacy Image *</FormLabel>
+                      <FormControl>
+                        <ImageUpload onUpload={(url) => field.onChange(url)} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormLabel>License Number *</FormLabel>
+              <MapContainer
+                center={[coordinates.lat, coordinates.lng]}
+                zoom={13}
+                scrollWheelZoom={false}
+                style={{ width: "100%", height: "60vh" }}
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                <Marker position={[coordinates.lat, coordinates.lng]}>
+                  <Popup>
+                    <strong>Clicked Location</strong>
+                    <br />
+                    Latitude: {coordinates.lat}
+                    <br />
+                    Longitude: {coordinates.lng}
+                  </Popup>
+                </Marker>
+                <MapClickHandler setCoordinates={setCoordinates} />
+                <AutoFocusMarker
+                  position={[coordinates.lat, coordinates.lng]}
+                />
+              </MapContainer>
             </div>
-            <MapContainer
-              center={[coordinates.lat, coordinates.lng]}
-              zoom={13}
-              scrollWheelZoom={false}
-              style={{ width: "100%", height: "60vh" }}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={[coordinates.lat, coordinates.lng]}>
-                <Popup>
-                  <strong>Clicked Location</strong>
-                  <br />
-                  Latitude: {coordinates.lat}
-                  <br />
-                  Longitude: {coordinates.lng}
-                </Popup>
-              </Marker>
-              <MapClickHandler setCoordinates={setCoordinates} />
-              <AutoFocusMarker position={[coordinates.lat, coordinates.lng]} />
-            </MapContainer>
           </div>
           <Button type="submit">Submit</Button>
         </form>
