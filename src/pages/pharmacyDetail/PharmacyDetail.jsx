@@ -18,6 +18,36 @@ function PharmacyDetail() {
             status: "pending",
             email: "m@example.com",
           },
+          {
+            id: "728ed52f",
+            amount: 100,
+            status: "pending",
+            email: "m@example.com",
+          },
+          {
+            id: "728ed52f",
+            amount: 100,
+            status: "pending",
+            email: "m@example.com",
+          },
+          {
+            id: "728ed52f",
+            amount: 100,
+            status: "pending",
+            email: "m@example.com",
+          },
+          {
+            id: "728ed52f",
+            amount: 100,
+            status: "pending",
+            email: "m@example.com",
+          },
+          {
+            id: "728ed52f",
+            amount: 100,
+            status: "pending",
+            email: "m@example.com",
+          },
         ];
         setData(response);
       } catch (err) {
@@ -33,6 +63,7 @@ function PharmacyDetail() {
   return (
     <div>
       <div className="container mx-auto py-10">
+        <DataTable columns={columns} data={data} />
         <DataTable columns={columns} data={data} />
       </div>
     </div>
