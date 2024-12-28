@@ -3,6 +3,8 @@ import Navbar from "./components/Navbar";
 import SideMenu from "./components/SideMenu";
 import Home from "./pages/Home";
 import { useState } from "react";
+import MedicineList from "./pages/medicineList/MedicineList";
+import PharmacyDetail from "./pages/pharmacyDetail/PharmacyDetail";
 
 function App() {
   const [role, setRole] = useState('user');
@@ -22,6 +24,11 @@ function App() {
       {/* Routes */}
       <Routes>
         <Route path="/" element={<Home />} />
+        
+        <Route path="/pharmacylist" element={<PharmacyDetail />} />
+        
+        <Route path="/medicineList" element={<MedicineList />} />
+      
         {/* other routes*/}
       </Routes>
     </Router>
