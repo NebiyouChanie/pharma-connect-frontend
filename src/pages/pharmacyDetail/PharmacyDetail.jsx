@@ -33,11 +33,8 @@ function AutoFocusMarker({ position }) {
   return null;
 }
 export default function PharmacyDetail() {
-  const [coordinates, setCoordinates] = useState({
-    lat: 8.989,
-    lng: 38.74,
-  });
-  console.log(coordinates);
+  const [coordinates, setCoordinates] = useState({ lat: 9.03, lng: 38.74 });
+
   return (
     <div className="container mb-8">
       <div className="flex items-center flex-col gap-8 mb-5">
@@ -50,10 +47,10 @@ export default function PharmacyDetail() {
             <p>Owner: Abebe Kebede</p>
             <p className="flex items-center gap-4 mb-8">
               Distance: Around 4.6KM{" "}
-              <span className="flex gap-1 items-center font-semibold">
+              <p className="flex gap-1 items-center font-semibold">
                 <Clock className="w-4 h-4" />
                 20Min
-              </span>
+              </p>
             </p>
           </div>
           <img
@@ -63,7 +60,7 @@ export default function PharmacyDetail() {
           />
         </div>
         <MapContainer
-          center={[51.505, -0.09]}
+          center={[coordinates.lat, coordinates.lng]}
           zoom={13}
           scrollWheelZoom={false}
           style={{ width: "100%", height: "60vh" }}
@@ -72,22 +69,17 @@ export default function PharmacyDetail() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker
-            position={[
-              coordinates.lat || 8.989590867391874,
-              coordinates.lng || 38.74367144599007,
-            ]}
-          >
-            <Popup>Name of the Pharmacy</Popup>
+          <Marker position={[coordinates.lat, coordinates.lng]}>
+            <Popup>
+              <strong>Clicked Location</strong>
+              <br />
+              Latitude: {coordinates.lat}
+              <br />
+              Longitude: {coordinates.lng}
+            </Popup>
           </Marker>
-
           <MapClickHandler setCoordinates={setCoordinates} />
-          <AutoFocusMarker
-            position={[
-              coordinates.lat || 8.989590867391874,
-              coordinates.lng || 38.74367144599007,
-            ]}
-          />
+          <AutoFocusMarker position={[coordinates.lat, coordinates.lng]} />
         </MapContainer>
 
         <Button variant="outline" className="self-start">
