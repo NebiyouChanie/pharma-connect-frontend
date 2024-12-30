@@ -15,7 +15,7 @@ import { BASE_URL } from "@/lib/utils";
 import Dropdown from '../../components/Dropdown'
 // Define the validation schema using Zod
 const formSchema = z.object({
-  medicineName: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectID format"),
+  medicineId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectID format"),
   
   quantity: z
       .string()
@@ -38,7 +38,7 @@ function AddMedicineToInventory() {
     defaultValues: {
       medicineName: '',
       quantity: 1,
-      price: 100,
+      price: 0,
       expiryDate: '',
     }
   });
@@ -47,8 +47,8 @@ function AddMedicineToInventory() {
   const [selectedDate, setSelectedDate] = useState(null); 
 
   const onSubmit = (data) => {
-    
-    console.log(data.medicineName)
+ 
+    console.log(data)
   };
 
  
@@ -83,7 +83,7 @@ function AddMedicineToInventory() {
             {/* Medicine Name */}
             <FormField
               control={form.control}
-              name="medicineName"
+              name="medicineId"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Medicine Name *</FormLabel>
@@ -111,25 +111,27 @@ function AddMedicineToInventory() {
               />
             
             {/* Medicine Price*/}
-            <FormField
-              control={form.control}
-              name="Price"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Price*</FormLabel>
-                  <FormControl>
-                    <Input  placeholder="100" {...field}  type="number"/>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
+            
+              <FormField
+                control={form.control}
+                name="price" // Correct field name to match schema
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price*</FormLabel>
+                    <FormControl>
+                      <Input placeholder="100" {...field} type="number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
+
 
 
               {/* expiration date */}
               <FormField
                 control={form.control}
-                name="expirationDate"
+                name="expiryDate"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Expiration Date *</FormLabel>

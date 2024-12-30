@@ -20,6 +20,7 @@ export default function Dropdown({ medicines, onSelect }) {
     setOpen(false); // Close the popover
     setSelectedMedicine(medicine); // Set the selected medicine object
     onSelect(medicine.value); // Call onSelect with the medicine ID
+    console.log("🚀 ~ file: Dropdown.jsx:24 ~ onStoreSelect ~ medicine.value:", medicine.value)
   };
 
   return (
@@ -31,7 +32,7 @@ export default function Dropdown({ medicines, onSelect }) {
           role="combobox"
           aria-expanded={open}
           aria-label="Select a medicine"
-          className={"w-[200px] justify-between block"}
+          className={"w-[290px] items-center flex justify-between gap-16"}
         >
           {selectedMedicine ? selectedMedicine.label : "Select a Medicine"}
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />

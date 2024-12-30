@@ -15,7 +15,7 @@ const buttonVariants = cva(
         outline:
           "border border-primary bg-background text-primary hover:bg-accent hover:text-primary",
         dropdown:
-          "border border-gray-300  bg-background text-black hover:bg-accent hover:text-primary",
+          "border border-gray-300  bg-background text-black hover:bg-accent hover:text-primary ",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",

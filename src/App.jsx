@@ -5,7 +5,6 @@ import Home from "./pages/Home";
 import { useState } from "react";
 import SearchResults from "./pages/searchResult/SearchResult";
 import MedicineDetail from "./pages/medicineDetail/MedicineDetail";
-import "leaflet/dist/leaflet.css";
 import PharmacyDetail from "./pages/pharmacyDetail/PharmacyDetail";
 
 import AddMedicine from "./pages/addMedicine/AddMedicine";
@@ -21,6 +20,8 @@ import Medicines from "./pages/Medicines/Medicines";
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import SignupForm from "./pages/auth/SignUP/SignUp";
+import SignInForm from "./pages/auth/SignIn/SignIn";
 
 function App() {
   const [role, setRole] = useState("user");
@@ -50,10 +51,14 @@ function App() {
       {/* Routes */}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/sign-up" element={<SignupForm/>} />
+        <Route path="/sign-in" element={<SignInForm />} />
         <Route path="/searchResults" element={<SearchResults />} />
         <Route path="/medicineDetail/:id" element={<MedicineDetail />} />
         <Route path="/pharmacyDetail/:id" element={<PharmacyDetail />} />
         <Route path="/joinAsPharmacy" element={<JoinAsPharmacy />} />
+        <Route path="/add-medicine-admin" element={<AddMedicine />} />
+        <Route path="/add-medicine-pharmacist" element={<AddMedicineToInventory />} />
 
         {/* other routes*/}
       </Routes>
