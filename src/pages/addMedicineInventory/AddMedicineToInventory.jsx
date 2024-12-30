@@ -12,11 +12,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { useEffect } from 'react';
 import {toast} from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
-import { DropdownMenu } from '@radix-ui/react-dropdown-menu';
-
+import Dropdown from '../../components/Dropdown'
 // Define the validation schema using Zod
 const formSchema = z.object({
-  medicineName: z.string().min(1, "Medicine name is required"),
+  medicineName: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectID format"),
+  
   quantity: z
       .string()
       .min(1, "Quantity is required")
@@ -47,7 +47,8 @@ function AddMedicineToInventory() {
   const [selectedDate, setSelectedDate] = useState(null); 
 
   const onSubmit = (data) => {
-    console.log(data); // Handle form submission
+    
+    console.log(data.medicineName)
   };
 
  
@@ -68,7 +69,7 @@ function AddMedicineToInventory() {
   }, []);
 
 
-  console.log(medicines)
+  
   return (
     <div className="container py-16">
       <h1 className="text-4xl font-bold mb-4">Add Medicine to Inventory</h1>
@@ -87,7 +88,7 @@ function AddMedicineToInventory() {
                 <FormItem>
                   <FormLabel>Medicine Name *</FormLabel>
                   <FormControl>
-                    <DropdownMenu item={medicines}     placeholder="Paracetamol" {...field} />
+                  <Dropdown medicines={medicines} onSelect={(selectedMedicineId)=>{field.onChange(selectedMedicineId)}} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -151,26 +152,8 @@ function AddMedicineToInventory() {
 
             </div>
 
-            <div>
-
-            {/* Image Upload */}
-            {/* <FormField
-              control={form.control}
-              name="imageUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel></FormLabel>
-                  <FormControl>
-                    <ImageUpload onUpload={(url) => field.onChange(url)} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-              /> */}
-              </div>
-
           </div>
-            <Button type="submit">Submit</Button>
+            <Button type="submit">Add Medicine</Button>
           </form>
         </Form>
     </div>
