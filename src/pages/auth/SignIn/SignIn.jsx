@@ -8,18 +8,19 @@ import { Link } from "react-router-dom";
 import * as z from "zod";
 import {toast} from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
+import {useNavigate} from 'react-router-dom'
 
 // Zod schema for validation
-const navigate = navigate()
 const signInSchema = z.object({
-  email: z
+    email: z
     .string()
     .nonempty("Email is required")
     .email("Enter a valid email"),
-  password: z.string().nonempty("Password is required"),
+    password: z.string().nonempty("Password is required"),
 });
 
 function SignInForm() {
+const navigate =  useNavigate()
   const form = useForm({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -51,7 +52,7 @@ function SignInForm() {
           }
     
           toast.success("Signed In Succesfully.");
-          console.log("Success:", await response.json()); // Log response if needed
+          navigate('/')
         } catch (error) {
           // Handle network or unexpected errors
           toast.error("Something went wrong. Please try again.");
