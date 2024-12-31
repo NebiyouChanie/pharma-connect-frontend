@@ -23,6 +23,7 @@ function MapClickHandler({ setCoordinates }) {
   });
   return null;
 }
+
 function AutoFocusMarker({ position }) {
   const map = useMap();
 
@@ -32,6 +33,7 @@ function AutoFocusMarker({ position }) {
 
   return null;
 }
+
 export default function PharmacyDetail() {
   const [coordinates, setCoordinates] = useState({ lat: 9.03, lng: 38.74 });
 
@@ -47,11 +49,12 @@ export default function PharmacyDetail() {
             <p>Owner: Abebe Kebede</p>
             <p className="flex items-center gap-4 mb-8">
               Distance: Around 4.6KM{" "}
-              <p className="flex gap-1 items-center font-semibold">
+              <span className="flex gap-1 items-center font-semibold">
                 <Clock className="w-4 h-4" />
                 20Min
-              </p>
+              </span>
             </p>
+
           </div>
           <img
             src={medicineImage}

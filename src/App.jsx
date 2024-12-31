@@ -22,7 +22,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SignupForm from "./pages/auth/SignUP/SignUp";
 import SignInForm from "./pages/auth/SignIn/SignIn";
-// import  {SearchProvider}  from "./context/searchContext"
+import  {SearchProvider}  from "./context/searchContext"
 function App() {
   const [role, setRole] = useState("user");
 
@@ -64,7 +64,7 @@ function App() {
         {/* other routes*/}
       </Routes>
     </Router>
-      </SearchProvider>
+  </SearchProvider>
   );
 }
 

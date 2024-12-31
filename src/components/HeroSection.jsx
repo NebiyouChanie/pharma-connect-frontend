@@ -5,13 +5,15 @@ import { Input } from './ui/input'
 import { Search } from 'lucide-react'
 import { BASE_URL } from "@/lib/utils";
 import {useNavigate} from 'react-router-dom'
-// import { useSearchContext } from "../context/searchContext";
-
+import { useSearchContext } from '@/context/searchContext'
+ 
 
 function HeroSection() {
   const [searchQuery, setSearchQuery] = useState(''); // State to store search input
   const [searchResults, setSearchResults] = useState([]); // State to store backend response
   const navigate =  useNavigate()
+  const {updateSearchResults} = useSearchContext();
+
 
   // 
   const handleSearch = async (event) => {
@@ -31,12 +33,11 @@ function HeroSection() {
         body: JSON.stringify({ medicineName: searchQuery }),
       });
   
+      if(!response.ok) { throw new Error("unable to find pharamacies")}
       const data = await response.json();
-      if (!response.ok) {
-        throw new Error('Failed to fetch search results.');
-      }
-      setSearchResults(data)
-      navigate('/searchResults', { state: { searchResults: data.data } }); // Pass results via state
+       
+      updateSearchResults(data)
+      navigate('/searchResults', { state: { searchQuery, searchResults: data.data } }); 
     } catch (error) {
       console.error('Error fetching search results:', error);
     }
