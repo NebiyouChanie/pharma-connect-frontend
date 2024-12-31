@@ -1,20 +1,93 @@
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ChevronDown } from "lucide-react";
 import SearchResultsCard from "./searchResultsCard/SearchResultsCard";
-import { useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
+import PriceRangeDropdown from "../../components/PriceRangeDropdown";
 import { useSearchContext } from "@/context/searchContext";
 
 export default function SearchResults() {
   const location = useLocation();
-  const { searchQuery} = location.state || {}; 
+  const { searchQuery } = location.state || {};
+  const { getSearchedResults } = useSearchContext();
+  const searchedResult = getSearchedResults();
   
-  const {getSearchedResults} = useSearchContext()
-  const serachedResult = getSearchedResults()
+  const [displayedResults, setDisplayedResults] = useState(searchedResult);
+  const [userLocation, setUserLocation] = useState({});
+  const [error, setError] = useState(null);
+  const [selectedRange, setSelectedRange] = useState(null);
   
+  const requestLocation = () => {
+    if (!navigator.geolocation) {
+      setError("Geolocation is not supported by your browser.");
+      return;
+    }
+    
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setUserLocation({ latitude, longitude });
+        setError(null);
+      },
+      (error) => {
+        setError(error.message || "An unknown error occurred.");
+      }
+    );
+  };
   
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const toRad = (value) => (value * Math.PI) / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); // Radius of Earth in km
+  };
+  displayedResults?.map((pharmacy)=>{
+    pharmacy.distance= calculateDistance(
+      userLocation.latitude,
+      userLocation.longitude,
+      pharmacy.latitude,
+      pharmacy.longitude
+    );
+    pharmacy.time= pharmacy.distance * 2
+
+  })
+
+  const handleNearme = () => {
+    console.log(userLocation)
+    if (userLocation.latitude && userLocation.longitude) {
+      const nearbyResults = searchedResult.filter((pharmacy) => {
+        const distance = calculateDistance(
+          userLocation.latitude,
+          userLocation.longitude,
+          pharmacy.latitude,
+          pharmacy.longitude
+        );
+        return distance <= 5;  
+      });
+      setDisplayedResults(nearbyResults);
+    }
+  };
+
+  const handleFilter = (range) => {
+    setSelectedRange(range);
+    const filteredMedicine = searchedResult.filter(
+      (pharmacy) => pharmacy.price >= range[0] && pharmacy.price <= range[1]
+    );
+    setDisplayedResults(filteredMedicine);
+  };
+
+  useEffect(() => {
+    if (userLocation.latitude && userLocation.longitude) {
+      handleNearme();
+    }
+  }, [userLocation]);
+
 
   return (
     <div className="container">
@@ -24,53 +97,33 @@ export default function SearchResults() {
       </div>
       <h2 className="my-4 font-bold text-3xl">Results for: {searchQuery}</h2>
       <div className="flex gap-8 mb-5">
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center text-sm lg:text-base pr-5 text-gray-700 gap-4 border-r-2 border-r-gray-700">
-            Filter by price <ChevronDown className="w-5 h-5" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>10birr-100birr</DropdownMenuItem>
-            <DropdownMenuItem>100birr-200birr</DropdownMenuItem>
-            <DropdownMenuItem>200birr-300birr</DropdownMenuItem>
-            <DropdownMenuItem>300birr-400birr</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger className="flex text-sm items-center pr-5 text-gray-700 gap-4 border-r-2 border-r-gray-700">
-            Filter by location <ChevronDown className="w-5 h-5" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem>4 kilo</DropdownMenuItem>
-            <DropdownMenuItem>Legehar</DropdownMenuItem>
-            <DropdownMenuItem>Megenagna</DropdownMenuItem>
-            <DropdownMenuItem>Mexico</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <PriceRangeDropdown onSelect={handleFilter} />
+        <Button variant="outline" onClick={requestLocation}>
+          Near Me
+        </Button>
+        {error && <p className="text-red-500">{error}</p>}
       </div>
       <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
-        <Separator />
-        {serachedResult?.length === 0 ? (
-          <p>No results found</p>
-        ) : (
-          serachedResult?.map((result, index) => {
-            if (
-              !result ||
-              typeof result.pharmacyName !== "string" ||
-              typeof result.address !== "string"
-            ) {
-              console.error(`Invalid result at index ${index}`, result);
-              return null;
-            }
-            return (
-              <SearchResultsCard
-                key={index}
-                pharmacyName={result.pharmacyName}
-                address={result.address}
-              />
-            );
-          })
-        )}
-      </div>
+  <Separator />
+  {displayedResults?.length === 0 ? (
+    <p>No results found</p>
+  ) : (
+    displayedResults?.map((result, index) => {
+      console.log(result.time, result.distance); // Log the values
+      return (
+        <SearchResultsCard
+          key={index}
+          pharmacyName={result.pharmacyName}
+          address={result.address}
+          distance={result.distance}
+          time={result.time}
+          price={result.price}
+        />
+      );
+    })
+  )}
+</div>
+
     </div>
   );
 }

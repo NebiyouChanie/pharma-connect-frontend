@@ -1,7 +1,7 @@
 import { MapPin, Clock } from "lucide-react";
 import cardImage from "../../../assets/aboutUS.png";
 import { Link } from "react-router-dom";
-export default function SearchResultsCard({pharmacyName, address}) {
+export default function SearchResultsCard({pharmacyName, address, price, distance, time}) {
   return (
     <div className="w-full md:w-[47%] text-xs lg:text-sm shadow-md text-gray-700 rounded-md border-gray-300 border overflow-hidden grid grid-cols-2 gap-4 pr-2">
       <img className="h-full w-full" src={cardImage} alt="pharmacy entrance" />
@@ -13,11 +13,11 @@ export default function SearchResultsCard({pharmacyName, address}) {
         </span>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
         <span className="flex items-center gap-1">
-          <Clock className="w-4 h-4 text-gray-500" />
-          Around 20 Min
+          Around {time} . {distance}
         </span>
-         <span className="font-semibold text-gray-800">Br 489.00</span>
+         
         </div>
+         <span className="font-semibold text-gray-800">Br {price}</span>
         <Link className="text-blue-700 underline">See pharmacy detail</Link>
       </div>
     </div>
