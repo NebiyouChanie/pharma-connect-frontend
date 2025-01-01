@@ -3,7 +3,6 @@ import HeroIllustration from '../assets/HeroIllustration.svg'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Search } from 'lucide-react'
-import { BASE_URL } from "@/lib/utils";
 import {useNavigate} from 'react-router-dom'
 import { useSearchContext } from '@/context/searchContext'
  
@@ -23,26 +22,9 @@ function HeroSection() {
       alert("Please enter a search term.");
       return;
     }
-  
-    try {
-      const response = await fetch(`${BASE_URL}/search`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ medicineName: searchQuery }),
-      });
-  
-      if(!response.ok) { throw new Error("unable to find pharamacies")}
-      const data = await response.json();
-       
-      updateSearchResults(data)
-      navigate('/searchResults', { state: { searchQuery, searchResults: data.data } }); 
-    } catch (error) {
-      console.error('Error fetching search results:', error);
-    }
-  };
-  
+    navigate('/searchResults', { state: { searchQuery } }); 
+  }
+ 
   return (
     <div className='flex flex-col md:flex-row gap-8 md:justify-between md:items-center mt-8'>
       <div className='max-w-[90%] md:max-w-[50%] xl:max-w-[605px]'>
