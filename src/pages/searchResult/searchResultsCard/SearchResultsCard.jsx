@@ -13,7 +13,7 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
         </span>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
         <span className="flex items-center gap-1">
-          Around {time} . {distance}
+          Around {time} | {distance}
         </span>
          
         </div>
