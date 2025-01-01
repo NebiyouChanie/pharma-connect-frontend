@@ -22,49 +22,53 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SignupForm from "./pages/auth/SignUP/SignUp";
 import SignInForm from "./pages/auth/SignIn/SignIn";
-import  {SearchProvider}  from "./context/searchContext"
+import { SearchProvider } from "./context/searchContext";
+import ApprovePage from "./pages/approvePage/ApprovePage";
 function App() {
   const [role, setRole] = useState("user");
 
   return (
     <SearchProvider>
-    <Router>
-      <ToastContainer
-      // position="center"
-      // autoClose={5000} // Automatically closes after 5 seconds
-      // hideProgressBar={false} // Shows the progress bar
-      // newestOnTop={false} // Toasts appear at the bottom
-      // closeOnClick={true} // Closes the toast when clicked
-      // rtl={false} // Set to true for right-to-left languages
-      // draggable
-      // pauseOnHover={true} // Pauses the toast when hovered
-      />
-      {/* Desktop Navbar */}
-      <div className="hidden md:block">
-        <Navbar role={role} />
-      </div>
+      <Router>
+        <ToastContainer
+        // position="center"
+        // autoClose={5000} // Automatically closes after 5 seconds
+        // hideProgressBar={false} // Shows the progress bar
+        // newestOnTop={false} // Toasts appear at the bottom
+        // closeOnClick={true} // Closes the toast when clicked
+        // rtl={false} // Set to true for right-to-left languages
+        // draggable
+        // pauseOnHover={true} // Pauses the toast when hovered
+        />
+        {/* Desktop Navbar */}
+        <div className="hidden md:block">
+          <Navbar role={role} />
+        </div>
 
-      {/* Mobile Side Menu */}
-      <div className="md:hidden">
-        <SideMenu role={role} />
-      </div>
+        {/* Mobile Side Menu */}
+        <div className="md:hidden">
+          <SideMenu role={role} />
+        </div>
 
-      {/* Routes */}
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/sign-up" element={<SignupForm/>} />
-        <Route path="/sign-in" element={<SignInForm />} />
-        <Route path="/searchResults" element={<SearchResults />} />
-        <Route path="/medicineDetail/:id" element={<MedicineDetail />} />
-        <Route path="/pharmacyDetail/:id" element={<PharmacyDetail />} />
-        <Route path="/joinAsPharmacy" element={<JoinAsPharmacy />} />
-        <Route path="/add-medicine-admin" element={<AddMedicine />} />
-        <Route path="/add-medicine-pharmacist" element={<AddMedicineToInventory />} />
-
-        {/* other routes*/}
-      </Routes>
-    </Router>
-  </SearchProvider>
+        {/* Routes */}
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/sign-up" element={<SignupForm />} />
+          <Route path="/sign-in" element={<SignInForm />} />
+          <Route path="/searchResults" element={<SearchResults />} />
+          <Route path="/medicineDetail/:id" element={<MedicineDetail />} />
+          <Route path="/pharmacyDetail/:id" element={<PharmacyDetail />} />
+          <Route path="/joinAsPharmacy" element={<JoinAsPharmacy />} />
+          <Route path="/add-medicine-admin" element={<AddMedicine />} />
+          <Route
+            path="/add-medicine-pharmacist"
+            element={<AddMedicineToInventory />}
+          />
+          <Route path="/approve-pharmacy/:id" element={<ApprovePage />} />
+          {/* other routes*/}
+        </Routes>
+      </Router>
+    </SearchProvider>
   );
 }
 
