@@ -119,6 +119,11 @@ export default function PharmacyDetail() {
                 <Clock className="w-4 h-4" />~{Math.round((distance / 4) * 60)}{" "}
                 Min
               </span>
+              Distance: Around 4.6KM{" "}
+              <span className="flex gap-1 items-center font-semibold">
+                <Clock className="w-4 h-4" />
+                20Min
+              </span>
             </p>
           </div>
           <img
