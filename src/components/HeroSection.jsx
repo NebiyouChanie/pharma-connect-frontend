@@ -45,7 +45,7 @@ function HeroSection() {
           <Button> <Link to={"/sign-up"}>Sign Up</Link></Button>
           <Button> <Link to={"/sign-in"}>Sign In</Link></Button>
           <Button variant="outline"> <Link to={"/join-us"}>Join As Pharmacy</Link></Button>
-          <Button variant="outline"> <Link to={"/sign-up-pharmacist"}>sign up as pharmacist</Link></Button>
+          <Button variant="outline"> <Link to={"/sign-up-pharmacist/67655f25de928e2d4f49f89d"}>sign up as pharmacist</Link></Button>
         </div>
       </div>
       <div>

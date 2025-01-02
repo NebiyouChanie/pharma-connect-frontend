@@ -3,14 +3,16 @@ import { NavLink } from "react-router-dom";
 import Logo from "../assets/Logo.svg";
 import navLinksByRole from "../constants/navLinks";
 import { CircleX, Menu } from "lucide-react";
-import { useRoleContext } from "@/context/roleContext";
+import { useUserContext } from "@/context/roleContext";
+
 function SideMenu() {
-
-  const { role } = useRoleContext();
-
-
+  const { user } = useUserContext();
   const [isOpen, setIsOpen] = useState(false);
-  const links = navLinksByRole[role];
+
+  // Check if the user is a pharmacist and pass the pharmacyId dynamically
+  const links = user?.role === "pharmacist" 
+    ? navLinksByRole.pharmacist(user?.pharmacyId)  // Dynamically add pharmacyId
+    : navLinksByRole[user?.role] || [];  // Default links for other roles
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -23,10 +25,9 @@ function SideMenu() {
         <img src={Logo} alt="pharma connect logo" className="h-8" />
         <button onClick={toggleMenu}>
           {isOpen ? (
-            
             <p className="text-primary text-2xl"></p>  
           ) : (
-            <Menu size={24} color="#286AA7"   />
+            <Menu size={24} color="#286AA7" />
           )}
         </button>
       </div>
@@ -40,7 +41,7 @@ function SideMenu() {
         <div className="p-4 flex justify-between items-center border-b border-gray-200">
           <img src={Logo} alt="pharma connect logo" className="h-6" />
           <button onClick={toggleMenu}>
-            <CircleX size={24} color="#286AA7"   />
+            <CircleX size={24} color="#286AA7" />
           </button>
         </div>
         <nav className="mt-4 text-primary">
@@ -54,7 +55,7 @@ function SideMenu() {
                       ? "text-white bg-primary rounded-md px-4 py-2 block"
                       : "hover:text-white hover:bg-primary rounded-md px-4 py-2 block transition-all ease-in-out"
                   }
-                  onClick={toggleMenu} 
+                  onClick={toggleMenu}
                 >
                   {link.label}
                 </NavLink>

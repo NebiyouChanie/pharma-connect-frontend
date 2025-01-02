@@ -5,12 +5,11 @@ const navLinksByRole = {
       { path: "/join-us", label: "Join Us" },
       { path: "/cart", label: "My Cart" },
     ],
-    pharmacist: [
+    pharmacist: (pharmacyId) => [
       { path: "/", label: "Dashboard" },
-      { path: "/inventory", label: "Inventory" },
-      { path: "/pharmacy-profile/6775b215e9c18e99cf266f48", label: "My pharmacy" },
+      { path: `/inventory/${pharmacyId}`, label: "Inventory" },
+      { path: `/pharmacy-profile/${pharmacyId}`, label: "My Pharmacy" },  // Add pharmacyId dynamically
       { path: "/add-medicine-to-inventory", label: "Add Medicine" },
-
     ],
     admin: [
       { path: "/", label: "Admin Dashboard" },

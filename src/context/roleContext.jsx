@@ -1,25 +1,22 @@
 import { createContext, useContext, useState } from "react";
 
-const RoleContext = createContext();
+const UserContext = createContext();
 
-export const useRoleContext = () => {
-  return useContext(RoleContext);
+export const useUserContext = () => {
+  return useContext(UserContext);   
 };
 
-export const RoleProvider = ({ children }) => {
-  const [role, setRole] = useState("user");
 
-  const updateRole = (userRole) => {
-    setRole(userRole);
-  };
+export const UserProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
 
-  const getRole = () => {
-    return role;
+  const updateUser = (userData) => {
+    setUser(userData);
   };
 
   return (
-    <RoleContext.Provider value={{ role, updateRole, getRole }}>
+    <UserContext.Provider value={{ user, updateUser }}>
       {children}
-    </RoleContext.Provider>
+    </UserContext.Provider>
   );
 };

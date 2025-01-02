@@ -13,6 +13,7 @@ import {toast} from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
 import Dropdown from '../../components/Dropdown'
 import { useUserContext } from "@/context/roleContext";
+import {useParams} from 'react-router-dom';
 
 // Define the validation schema using Zod
 const formSchema = z.object({
@@ -33,11 +34,11 @@ const formSchema = z.object({
 
   
 
-function AddMedicineToInventory() {
+function UpdateInventoryMedicine() {
   const { user } = useUserContext();  // Access user data from context
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: {
+    defaultValues: { 
       medicineName: '',
       quantity: 10,
       price: 15,
@@ -47,14 +48,19 @@ function AddMedicineToInventory() {
 
   const [medicines, setMedicines] = useState([])
   const [selectedDate, setSelectedDate] = useState(null); 
+  const  {pharmacyId} = useParams()
+  const [inventoryData, setInventoryData] = useState()
+
+
+  
 
   const onSubmit = async (data) => {
     try {
 
       const dataToSend = {...data,updatedBy:user.userId}
  
-      const response = await fetch(`${BASE_URL}/pharmacies/${user?.pharmacyId}/inventory`, {
-        method: 'POST',
+      const response = await fetch(`${BASE_URL}/pharmacies/${user?.pharmacyId}/inventory/${inventoryId}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json', // Correct header for JSON requests
         },
@@ -82,25 +88,34 @@ function AddMedicineToInventory() {
  
   // Fetch medicines
   useEffect(() => {
-    const fetchMedicines = async () => {
-      const response = await fetch(`${BASE_URL}/medicines`, {
+    //fetch inventory
+    const fetchInventory = async () => {
+      const response = await fetch(`${BASE_URL}/pharmacies/${pharmacyId}/inventory`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',  
         },
       });
-      const data = await response.json();
-      setMedicines(data.data); // Set medicines in state
-    };
+      const Inventory = await response.json();
+       
+      const formatedInventory = Inventory.map(inventory=>({
+        medicineName: inventory.medicineName,
+        quantity: inventory.quantity,
+        price: inventory.price,
+        expiryDate: inventory.expiryDate,      
+      }))
 
-    fetchMedicines();
+      setInventoryData(formatedInventory)
+       
+    };
+    fetchInventory()
   }, []);
 
 
   
   return (
     <div className="container py-16">
-      <h1 className="text-4xl font-bold mb-4">Add Medicine to Inventory</h1>
+      <h1 className="text-4xl font-bold mb-4">Update Medicine in Inventory</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
     <div className='grid gap-8 md:grid-cols-2 md:gap-32 items-center'>
@@ -109,19 +124,8 @@ function AddMedicineToInventory() {
           <div className='flex flex-col gap-8'>
       
             {/* Medicine Name */}
-            <FormField
-              control={form.control}
-              name="medicineId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Medicine Name *</FormLabel>
-                  <FormControl>
-                  <Dropdown medicines={medicines} onSelect={(selectedMedicineId)=>{field.onChange(selectedMedicineId)}} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-              />
+             
+            <p>Medicine Name </p>: <p>mkdjfkdj</p>
             
             {/* Medicine Quantity */}
             <FormField
@@ -190,4 +194,4 @@ function AddMedicineToInventory() {
   );
 }
 
-export default AddMedicineToInventory;
+export default UpdateInventoryMedicine;

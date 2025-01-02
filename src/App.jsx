@@ -7,7 +7,6 @@ import MedicineDetail from "./pages/medicineDetail/MedicineDetail";
 import PharmacyDetail from "./pages/pharmacyDetail/PharmacyDetail";
 
 import AddMedicine from "./pages/addMedicine/AddMedicine";
-import MedicineList from "./pages/medicineList/MedicineList";
 
 import AddMedicineToInventory from "./pages/addMedicineInventory/addMedicineToInventory";
 import UPdatePharmacyProfile from "./pages/UpdatePharmacy/UpdatePharmacyProfile";
@@ -25,15 +24,17 @@ import SignInForm from "./pages/auth/SignIn/SignIn";
 import { SearchProvider } from "./context/searchContext";
 import ApprovePage from "./pages/approvePage/ApprovePage";
 import SignUpPharmacistForm from "./pages/auth/SignUpPharmacist/SignUpPharmacist";
-import {RoleProvider } from "@/context/roleContext";
+import {UserProvider } from "@/context/roleContext";
 import ApplicationDetail from "./pages/applicationDetail/ApplicationDetail";
+import Inventory from "./pages/inventory/Inventory";
+import UpdateInventoryMedicine from "./pages/updateInventoryMedicine/UpdateInventoryMedicine";
 
  
 
 function App() {
   
   return (
-    <RoleProvider>
+    <UserProvider>
 
     <SearchProvider>
     
@@ -76,17 +77,18 @@ function App() {
         <Route path="/approve" element={<ApprovePage />} />
 
         {/* pharmacist */}
-        <Route path="/sign-up-pharmacist" element={<SignUpPharmacistForm/>} />
+        <Route path="/sign-up-pharmacist/:pharmacyId" element={<SignUpPharmacistForm/>} />
         <Route path="/add-medicine-to-inventory" element={<AddMedicineToInventory />} />
         <Route path="/pharmacy-profile/:id" element={<PharmacyDetail />} />
-        <Route path="/inventory" element={<MedicineList />} />
+        <Route path="/inventory/:id" element={<Inventory />} />
+        <Route path="/inventory/:pharmacyId/update/:inventoryId" element={<UpdateInventoryMedicine />} />
         <Route path="/update-pharmacy-profile" element={<UPdatePharmacyProfile />} />
 
         {/* other routes*/}
       </Routes>
     </Router>
   </SearchProvider>
-</RoleProvider>
+</UserProvider>
 
   );
 }

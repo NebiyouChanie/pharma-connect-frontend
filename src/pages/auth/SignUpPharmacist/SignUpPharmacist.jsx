@@ -13,7 +13,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
 
 import * as z from "zod";
 
@@ -40,6 +41,8 @@ const signupSchema = z
 
 function SignUpPharmacistForm() {
   const navigate = useNavigate();
+  const {pharmacyId} = useParams();
+  console.log("🚀 ~ file: SignUpPharmacist.jsx:60 ~ onSubmit ~ pharmacyId:", pharmacyId)
 
   const form = useForm({
     resolver: zodResolver(signupSchema),
@@ -55,7 +58,7 @@ function SignUpPharmacistForm() {
 
   const onSubmit = async (data) => {
     try {
-      data = {...data, role:"pharmacist"}
+      data = {...data, role:"pharmacist", pharmacyId:pharmacyId}
       const response = await fetch(`${BASE_URL}/users/signUp`, {
         method: "POST",
         headers: {
