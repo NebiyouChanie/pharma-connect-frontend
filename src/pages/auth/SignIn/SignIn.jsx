@@ -16,6 +16,7 @@ import * as z from "zod";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import { useRoleContext } from "@/context/roleContext";
 
 // Zod schema for validation
 const signInSchema = z.object({
@@ -33,6 +34,7 @@ function SignInForm() {
     },
   });
 
+  const { updateRole } = useRoleContext()
   const onSubmit = async (data) => {
     try {
       const response = await fetch(`${BASE_URL}/users/signIn`, {
@@ -50,6 +52,11 @@ function SignInForm() {
         console.error("Error Details:", errorData);
         return;
       }
+
+      const dataa = await response.json()
+
+      // set role
+      updateRole(dataa.role)
 
       toast.success("Signed In Succesfully.");
       navigate("/");

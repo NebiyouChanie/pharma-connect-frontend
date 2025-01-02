@@ -7,9 +7,9 @@ const navLinksByRole = {
     ],
     pharmacist: [
       { path: "/", label: "Dashboard" },
-      { path: "/inventory", label: "Manage Inventory" },
-      { path: "/profile", label: "Profile" },
-      { path: "/profile", label: "My pharmacy" },
+      { path: "/inventory", label: "Inventory" },
+      { path: "/pharmacy-profile/6775b215e9c18e99cf266f48", label: "My pharmacy" },
+      { path: "/add-medicine-to-inventory", label: "Add Medicine" },
 
     ],
     admin: [

@@ -3,8 +3,12 @@ import { NavLink } from "react-router-dom";
 import Logo from "../assets/Logo.svg";
 import navLinksByRole from "../constants/navLinks";
 import { CircleX, Menu } from "lucide-react";
+import { useRoleContext } from "@/context/roleContext";
+function SideMenu() {
 
-function SideMenu({ role }) {
+  const { role } = useRoleContext();
+
+
   const [isOpen, setIsOpen] = useState(false);
   const links = navLinksByRole[role];
 
@@ -41,7 +45,7 @@ function SideMenu({ role }) {
         </div>
         <nav className="mt-4 text-primary">
           <ul className="space-y-4 px-4">
-            {links.map((link) => (
+            {links?.map((link) => (
               <li key={link.path}>
                 <NavLink
                   to={link.path}

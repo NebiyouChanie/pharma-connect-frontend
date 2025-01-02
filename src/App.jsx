@@ -23,10 +23,17 @@ import "react-toastify/dist/ReactToastify.css";
 import SignupForm from "./pages/auth/SignUP/SignUp";
 import SignInForm from "./pages/auth/SignIn/SignIn";
 import  {SearchProvider}  from "./context/searchContext"
-function App() {
-  const [role, setRole] = useState("user");
+import SignUpPharmacistForm from "./pages/auth/SignUpPharmacist/SignUpPharmacist";
+import {RoleProvider } from "@/context/roleContext";
 
+
+
+
+function App() {
+  
   return (
+    <RoleProvider>
+
     <SearchProvider>
     <Router>
       <ToastContainer
@@ -41,12 +48,12 @@ function App() {
       />
       {/* Desktop Navbar */}
       <div className="hidden md:block">
-        <Navbar role={role} />
+        <Navbar/>
       </div>
 
       {/* Mobile Side Menu */}
       <div className="md:hidden">
-        <SideMenu role={role} />
+        <SideMenu />
       </div>
 
       {/* Routes */}
@@ -56,15 +63,20 @@ function App() {
         <Route path="/sign-in" element={<SignInForm />} />
         <Route path="/searchResults" element={<SearchResults />} />
         <Route path="/medicineDetail/:id" element={<MedicineDetail />} />
-        <Route path="/pharmacyDetail/:id" element={<PharmacyDetail />} />
-        <Route path="/joinAsPharmacy" element={<JoinAsPharmacy />} />
+        <Route path="/join-us" element={<JoinAsPharmacy />} />
         <Route path="/add-medicine-admin" element={<AddMedicine />} />
-        <Route path="/add-medicine-pharmacist" element={<AddMedicineToInventory />} />
+
+        {/* pharmacist */}
+        <Route path="/sign-up-pharmacist" element={<SignUpPharmacistForm/>} />
+        <Route path="/add-medicine-to-inventory" element={<AddMedicineToInventory />} />
+        <Route path="/pharmacy-profile/:id" element={<PharmacyDetail />} />
+        <Route path="/inventory" element={<MedicineList />} />
 
         {/* other routes*/}
       </Routes>
     </Router>
   </SearchProvider>
+</RoleProvider>
   );
 }
 

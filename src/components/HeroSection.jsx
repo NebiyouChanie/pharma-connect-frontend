@@ -4,7 +4,8 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Search } from 'lucide-react'
 import {useNavigate} from 'react-router-dom'
-import { useSearchContext } from '@/context/searchContext'
+import { useSearchContext } from '@/context/searchContext';
+import { Link } from 'react-router-dom'
  
 
 function HeroSection() {
@@ -41,8 +42,10 @@ function HeroSection() {
           <Button type="submit"><Search strokeWidth={4} size={40} /></Button>
         </form>
         <div className='mt-8 flex gap-4'>
-          <Button>Sign Up</Button>
-          <Button variant="outline">Join As Pharmacy</Button>
+          <Button> <Link to={"/sign-up"}>Sign Up</Link></Button>
+          <Button> <Link to={"/sign-in"}>Sign In</Link></Button>
+          <Button variant="outline"> <Link to={"/join-us"}>Join As Pharmacy</Link></Button>
+          <Button variant="outline"> <Link to={"/sign-up-pharmacist"}>sign up as pharmacist</Link></Button>
         </div>
       </div>
       <div>
