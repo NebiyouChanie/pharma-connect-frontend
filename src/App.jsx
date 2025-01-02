@@ -22,6 +22,12 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import SignupForm from "./pages/auth/SignUP/SignUp";
 import SignInForm from "./pages/auth/SignIn/SignIn";
+
+import { SearchProvider } from "./context/searchContext";
+import ApprovePage from "./pages/approvePage/ApprovePage";
+function App() {
+  const [role, setRole] = useState("user");
+  
 import  {SearchProvider}  from "./context/searchContext"
 import SignUpPharmacistForm from "./pages/auth/SignUpPharmacist/SignUpPharmacist";
 import {RoleProvider } from "@/context/roleContext";
@@ -35,6 +41,7 @@ function App() {
     <RoleProvider>
 
     <SearchProvider>
+    
     <Router>
       <ToastContainer
       // position="center"
@@ -77,6 +84,7 @@ function App() {
     </Router>
   </SearchProvider>
 </RoleProvider>
+
   );
 }
 
