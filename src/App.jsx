@@ -2,7 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import SideMenu from "./components/SideMenu";
 import Home from "./pages/Home";
-import { useState } from "react";
 import SearchResults from "./pages/searchResult/SearchResult";
 import MedicineDetail from "./pages/medicineDetail/MedicineDetail";
 import PharmacyDetail from "./pages/pharmacyDetail/PharmacyDetail";
@@ -25,15 +24,10 @@ import SignInForm from "./pages/auth/SignIn/SignIn";
 
 import { SearchProvider } from "./context/searchContext";
 import ApprovePage from "./pages/approvePage/ApprovePage";
-function App() {
-  const [role, setRole] = useState("user");
-  
-import  {SearchProvider}  from "./context/searchContext"
 import SignUpPharmacistForm from "./pages/auth/SignUpPharmacist/SignUpPharmacist";
 import {RoleProvider } from "@/context/roleContext";
 
-
-
+ 
 
 function App() {
   
@@ -72,12 +66,19 @@ function App() {
         <Route path="/medicineDetail/:id" element={<MedicineDetail />} />
         <Route path="/join-us" element={<JoinAsPharmacy />} />
         <Route path="/add-medicine-admin" element={<AddMedicine />} />
+       
+       {/* admin */}
+        <Route path="/applications" element={<ApplicationList />} />
+        <Route path="/pharmacies" element={<Pharmacies />} />
+        <Route path="/medicines" element={<Medicines />} />
+        <Route path="/approve" element={<ApprovePage />} />
 
         {/* pharmacist */}
         <Route path="/sign-up-pharmacist" element={<SignUpPharmacistForm/>} />
         <Route path="/add-medicine-to-inventory" element={<AddMedicineToInventory />} />
         <Route path="/pharmacy-profile/:id" element={<PharmacyDetail />} />
         <Route path="/inventory" element={<MedicineList />} />
+        <Route path="/update-pharmacy-profile" element={<UPdatePharmacyProfile />} />
 
         {/* other routes*/}
       </Routes>

@@ -28,6 +28,7 @@ import {
 export function DataTable ({
   columns,
   data,
+  searchKey,
 }) {
 
   const [columnFilters, setColumnFilters] = useState([])
@@ -49,11 +50,11 @@ export function DataTable ({
   return (
     <div>
     <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter ..."
-          value={(table.getColumn("email")?.getFilterValue()) ?? ""}
+    <Input
+          placeholder="Search"
+          value={(table.getColumn(searchKey)?.getFilterValue()) ?? ""}
           onChange={(event) =>
-            table.getColumn("email")?.setFilterValue(event.target.value)
+            table.getColumn(searchKey)?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -88,7 +89,7 @@ export function DataTable ({
     </div>
     <div className="rounded-md border">
       <Table>
-        <TableHeader>
+        <TableHeader className="bg-tableHeader text-[#fffff]">
           {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {

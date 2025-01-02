@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { columns } from "./Column";
 import { DataTable } from "../../components/ui/data-table";
+import {BASE_URL} from '../../lib/utils'
 
 function ApplicationList() {
   const [data, setData] = useState([]);
@@ -11,40 +12,13 @@ function ApplicationList() {
     async function fetchData() {
       try {
         //  API call
-        const response = [
-          {
-            id: "728ed52f",
-            ownerName:"nebiyou chanie",
-            pharmacyName:"international phramacy",
-            date:"12/12/17",
-            status:"Approved"
-          },
-          {
-            id: "728eddg52f",
-            ownerName:"Dagim abate",
-            pharmacyName:"international phramacy",
-            date:"12/12/17",
-            status:"Approved"
-          },
-          {
-            id: "728ed5dfg2f",
-            ownerName:"Tsigemariam zewdu",
-            pharmacyName:"international phramacy",
-            date:"12/12/17",
-            status:"Approved"
-          },
-          {
-            id: "728eddfg52f",
-            ownerName:"Yetmgeta Ewnetu",
-            pharmacyName:"international phramacy",
-            date:"12/12/17",
-            status:"Approved"
-          },
+        const response = await fetch(`${BASE_URL}/applications`);
+        const responseJson = await response.json();
+        console.log("🚀 ~ file: ApplicationList.jsx:18 ~ fetchData ~ responseJson:", responseJson);
 
+        // Save the original data
+        setData(responseJson.applications);
 
-        ];
-
-        setData(response);
 
       } catch (err) {
         setError("Failed to fetch data");
@@ -62,7 +36,7 @@ function ApplicationList() {
       <div className="container mx-auto py-10">
 
         <h2>Application List</h2>
-        <DataTable columns={columns} data={data} searchkey="PharmacyName" />
+        <DataTable columns={columns} data={data} searchKey="pharmacyName" />
 
       </div>
     </div>

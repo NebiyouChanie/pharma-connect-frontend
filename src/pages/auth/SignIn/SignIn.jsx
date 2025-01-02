@@ -126,7 +126,7 @@ function SignInForm() {
       {/* Additional Links */}
       <div className="mt-4 text-center text-sm text-gray-500">
         Don't have an account?{" "}
-        <Link to="/signup" className="text-primary hover:underline">
+        <Link to="/sign-up" className="text-primary hover:underline">
           Sign Up
         </Link>
       </div>
