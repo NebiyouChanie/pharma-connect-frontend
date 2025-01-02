@@ -5,7 +5,6 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandList, CommandSeparator } from "./ui/command";
 import { cn } from "@/lib/utils";
 import { CommandItem } from "cmdk";
-import { Pill } from "lucide-react";
 
 // The data for Addis Ababa subcities and parts
 const addisAbabaData = {
@@ -49,12 +48,11 @@ export default function LocationDropdown({ onSelect }) {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="dropdown"
-          size="sm"
+          variant="outline"
           role="combobox"
           aria-expanded={open}
           aria-label="Select a location"
-          className="w-[290px] items-center flex justify-between gap-16"
+          className="w-[200px] items-center flex justify-between gap-2"
         >
           {selectedLocation ? selectedLocation.label : "Select a Location"}
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
@@ -70,7 +68,6 @@ export default function LocationDropdown({ onSelect }) {
                   onSelect={() => onLocationSelect(location)}
                   className="flex items-center p-2 text-sm cursor-pointer"
                 >
-                  <Pill className="mr-2 h-4 w-4" />
                   {location.label}
                   <Check
                     className={cn(

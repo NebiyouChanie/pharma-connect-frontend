@@ -2,8 +2,10 @@ import React from 'react'
 import Logo from '../assets/Logo.svg'
 import { NavLink } from "react-router-dom";
 import navLinksByRole from "../constants/navLinks";
+import { useRoleContext } from "@/context/roleContext";
 
-function NavBar({ role }) {
+function NavBar() {
+    const { role } = useRoleContext();
   const links = navLinksByRole[role];
 
   return (
@@ -14,7 +16,7 @@ function NavBar({ role }) {
         </div>
         <nav className="text-primary">
           <ul className="flex space-x-4">
-            {links.map((link) => (
+            {links?.map((link) => (
               <li key={link.path}>
                 <NavLink
                   to={link.path}

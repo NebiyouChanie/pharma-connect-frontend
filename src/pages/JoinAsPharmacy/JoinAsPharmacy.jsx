@@ -59,14 +59,8 @@ const formSchema = z.object({
   city: z.string().nonempty("City is required"),
   state: z.string().nonempty("State is required"),
   zipCode: z.string().nonempty("Zip code is required"),
-  latitude: z
-    .string()
-    .nonempty("Latitude is required")
-    .transform((value) => parseFloat(value)),
-  longitude: z
-    .string()
-    .nonempty("Longitude is required")
-    .transform((value) => parseFloat(value)),
+  latitude: z.number({ required_error: "Latitude is required" }),
+  longitude: z.number({ required_error: "Longitude is required" }),
 
   licenseNumber: z
     .string()
@@ -98,9 +92,9 @@ function JoinAsPharmacy() {
   const onSubmit = async (data) => {
     try {
       data = { ...data, latitude: coordinates.lat, longitude: coordinates.lng };
-      console.log(data);
+
       const response = await fetch(
-        `${BASE_URL}/applications/createApplication`,
+        BASE_URL + `/applications/createApplication`,
         {
           method: "POST",
           headers: {
@@ -109,7 +103,7 @@ function JoinAsPharmacy() {
           body: JSON.stringify(data), // Send the form data as JSON
         }
       );
-
+      console.log("response awaited");
       if (!response.ok) {
         // Handle non-2xx status codes
         const errorData = await response.json();
@@ -126,6 +120,7 @@ function JoinAsPharmacy() {
       console.error("Error Details:", error);
     }
   };
+
 
   const [coordinates, setCoordinates] = useState({ lat: 9.03, lng: 38.74 });
   return (
@@ -230,6 +225,7 @@ function JoinAsPharmacy() {
                   </FormItem>
                 )}
               />
+
 
               {/* State */}
               <FormField

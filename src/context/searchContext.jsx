@@ -11,7 +11,6 @@ export const useSearchContext = () => {
 // Provider component
 export const SearchProvider = ({ children }) => {
     const [searchResults, setSearchResults] = useState([]);
-console.log(searchResults)
     // Function to update the search results
     const updateSearchResults = (results) => {
         setSearchResults(results);
