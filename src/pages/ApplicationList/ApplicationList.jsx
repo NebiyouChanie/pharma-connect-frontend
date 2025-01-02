@@ -14,7 +14,6 @@ function ApplicationList() {
         //  API call
         const response = await fetch(`${BASE_URL}/applications`);
         const responseJson = await response.json();
-        console.log("🚀 ~ file: ApplicationList.jsx:18 ~ fetchData ~ responseJson:", responseJson);
 
         // Save the original data
         setData(responseJson.applications);

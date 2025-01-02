@@ -39,10 +39,11 @@ export const columns = [
     {
         id: "actions",
         cell: ({ row }) => {
-            return(          
+            return(  
             <div className="space-x-6 flex">
-              <Link href={`/${row.original._id}`}>
-                See Details
+             { console.log(row.original._id)     }   
+              <Link to={`/applications/${row.original._id}`}>
+                <span className="text-primary">See Details</span>
               </Link>
             </div>)
         }} 

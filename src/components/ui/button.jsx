@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
-          "bg-destructive text-destructive-foreground hover:bg-destructive/90",
+          "bg-[#dc3545] text-destructive-foreground hover:bg-destructive/90",
         outline:
           "border border-primary bg-background text-primary hover:bg-accent hover:text-primary",
         dropdown:
@@ -20,11 +20,12 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
-        approve: "bg-green-700 text-white hover:bg-green-600",
+        approve: "bg-success text-white text-md hover:bg-green-500",
+        decline: "bg-error text-white text-md hover:bg-red-500",
         pending: "bg-amber-500 text-white hover:bg-amber-400",
       },
       size: {
-        default: "h-10 px-4 py-2",
+        default: "h-10 px-6 py-2",
         sm: "h-9 rounded-md px-3",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",

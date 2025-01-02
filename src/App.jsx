@@ -26,6 +26,7 @@ import { SearchProvider } from "./context/searchContext";
 import ApprovePage from "./pages/approvePage/ApprovePage";
 import SignUpPharmacistForm from "./pages/auth/SignUpPharmacist/SignUpPharmacist";
 import {RoleProvider } from "@/context/roleContext";
+import ApplicationDetail from "./pages/applicationDetail/ApplicationDetail";
 
  
 
@@ -69,6 +70,7 @@ function App() {
        
        {/* admin */}
         <Route path="/applications" element={<ApplicationList />} />
+        <Route path="/applications/:id" element={<ApplicationDetail />} />
         <Route path="/pharmacies" element={<Pharmacies />} />
         <Route path="/medicines" element={<Medicines />} />
         <Route path="/approve" element={<ApprovePage />} />
