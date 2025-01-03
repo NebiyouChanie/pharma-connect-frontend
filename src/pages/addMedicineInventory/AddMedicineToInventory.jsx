@@ -39,6 +39,7 @@ const formSchema = z.object({
 
 function AddMedicineToInventory() {
   const user = cookies.get("user")
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -56,7 +57,9 @@ function AddMedicineToInventory() {
     try {
 
       const dataToSend = {...data,updatedBy:user.userId}
+      console.log("🚀 ~ file: AddMedicineToInventory.jsx:60 ~ onSubmit ~ dataToSend:", dataToSend)
  
+      console.log("🚀 ~ file: AddMedicineToInventory.jsx:64 ~ onSubmit ~ pharmacyId:", user.pharmacyId)
       const response = await fetch(`${BASE_URL}/pharmacies/${user?.pharmacyId}/inventory`, {
         method: 'POST',
         headers: {
@@ -80,7 +83,6 @@ function AddMedicineToInventory() {
       toast.error("Something went wrong. Please try again.");
       console.error("Error Details:", error);
     }
-    console.log(data)
   };
 
  

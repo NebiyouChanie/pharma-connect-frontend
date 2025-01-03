@@ -59,11 +59,9 @@ function SignInForm() {
 
       // set user
        cookies.set("user",userData)
-      //  cookies.set("user",null) logout
-
 
       toast.success("Signed In Succesfully.");
-      navigate(`/pharmacy-profile/${userData.pharmacyId}`);
+      navigate(`/`);
     } catch (error) {
       // Handle network or unexpected errors
       toast.error("Something went wrong. Please try again.");

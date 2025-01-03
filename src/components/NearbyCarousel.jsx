@@ -9,7 +9,8 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel"
 
-export function NearbyCarousel() {
+export function NearbyCarousel({pharmacies}) {
+  console.log("🚀 ~ file: NearbyCarousel.jsx:13 ~ NearbyCarousel ~ pharmacies:", pharmacies)
   return (
     <Carousel
       opts={{
@@ -18,13 +19,25 @@ export function NearbyCarousel() {
       className="w-full "
     >
       <CarouselContent>
-        {Array.from({ length: 10 }).map((_, index) => (
+        {pharmacies.map((pharmacy, index) => (
           <CarouselItem key={index} className=" md:basis-1/3 lg:basis-1/6">
             <div className="p-1">
               <Card>       
-                <CardContent className="flex aspect-square items-center justify-center p-6 bg-lightbg">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
-                </CardContent>
+              <CardContent 
+  className="flex aspect-square items-center justify-center p-6 rounded relative"
+  style={{
+    backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.1)), url(${pharmacy.pharmacyImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  }}
+>
+  <p className="absolute bottom-4 left-4 text-white text-lg font-semibold ">
+    {pharmacy.name.length > 15 ? pharmacy.name.substring(0, 15) + '...' : pharmacy.name}
+  </p>
+</CardContent>
+
+
+
               </Card>
             </div>
           </CarouselItem>

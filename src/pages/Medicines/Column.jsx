@@ -1,33 +1,32 @@
- 
-import { Button } from "@/components/ui/button"
-import { Edit } from "lucide-react";
-import { Trash } from "lucide-react";
-import { MoreHorizontal } from "lucide-react";
+import {CellAction}  from "./CellAction";
+
 
 
 export const columns = [
     {
-      accessorKey: "medicineName",
+      accessorKey: "name",
       header: "Medicine Name",
     },
     {
-        accessorKey: "description",
-        header: "Description",
-    },
-    {
-      accessorKey: "catagory",
+      accessorKey: "category",
       header: "Category",
     },
     {
+      accessorKey: "description",
+      header: "Description",
+      cell: ({row}) => {
+        const description = row.original.description;
+        return description.length > 50 
+          ? <div>{description.substring(0, 50) + '...'}</div> 
+          : <div>{description}</div>;
+      }
+    }
+    ,
+    
+    {
         id: "actions",
-        cell: ({ row }) => {
-            return(          
-            <div className="space-x-6 flex">
-                
-                <Edit />
-                <Trash  color="red"/>
-
-            </div>)
-        }} 
+      header: "Actions",
+        cell: ({row}) => <CellAction data={row.original}/>
+    },
   ]
   

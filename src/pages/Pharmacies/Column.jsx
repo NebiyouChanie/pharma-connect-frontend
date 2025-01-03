@@ -1,8 +1,5 @@
- 
-import { Button } from "@/components/ui/button"
-import { Edit } from "lucide-react";
-import { Trash } from "lucide-react";
-import { MoreHorizontal } from "lucide-react";
+import {CellAction}  from "./CellAction";
+
 
 
 export const columns = [
@@ -11,23 +8,33 @@ export const columns = [
       header: "Owner Name",
     },
     {
-      accessorKey: "pharmacyName",
+      accessorKey: "name",
       header: "Pharmacy Name",
     },
-      {
-        accessorKey: "date",
-        header: "Date",
-      },
     {
-        id: "actions",
-        cell: ({ row }) => {
-            return(          
-            <div className="space-x-6 flex">
-                
-                <Edit />
-                <Trash  color="red"/>
-
-            </div>)
-        }} 
+      accessorKey: "state",
+      header: "State",
+    },
+    {
+      accessorKey: "address",
+      header: "Address",
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Date",
+      cell: ({ row }) => {
+        const createdDate = new Date(row.original.createdAt);
+        if (isNaN(createdDate)) return "Invalid Date";
+        const date = createdDate.getDate().toString().padStart(2, "0");
+        const month = (createdDate.getMonth() + 1).toString().padStart(2, "0");
+        const year = createdDate.getFullYear();
+        return `${date}-${month}-${year}`;
+      }
+    },
+    {
+            id: "actions",
+            header: "Actions",
+            cell: ({row}) => <CellAction data={row.original}/>
+        },
   ]
   

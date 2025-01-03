@@ -42,7 +42,6 @@ const signupSchema = z
 function SignUpPharmacistForm() {
   const navigate = useNavigate();
   const {pharmacyId} = useParams();
-  console.log("🚀 ~ file: SignUpPharmacist.jsx:60 ~ onSubmit ~ pharmacyId:", pharmacyId)
 
   const form = useForm({
     resolver: zodResolver(signupSchema),

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { columns } from "./Column";
 import { DataTable } from "../../components/ui/data-table";
+import {BASE_URL} from '../../lib/utils'
 
 function Medicines() {
   const [data, setData] = useState([]);
@@ -11,38 +12,17 @@ function Medicines() {
     async function fetchData() {
       try {
         //  API call
-        const response = [
-        
-            {
-                id: "728edddd4552f",
-                medicineName:"Paracitamol",
-                description:"pillllllllllllllllllllllllll",
-                catagory:"pill",
-                
-              },
-          {
-            id: "728ed4sdf552f",
-            medicineName:"Paracitamol",
-            description:"pillllllllllllllllllllllllll",
-            catagory:"pill",
+        try {
+      
+          const response = await fetch(`${BASE_URL}/medicines`)
+          const responseJson = await response.json()
+          const Medicines = responseJson.data
+          setData(Medicines)
+          
+        } catch (error) {
+          toast.error("unable to fetch medicines")
+        }
             
-          },
-          {
-            id: "728ed4sdfsd552f",
-            medicineName:"Paracitamol",
-            description:"pillllllllllllllllllllllllll",
-            catagory:"pill",
-            
-          },
-          {
-            id: "728ed45sdfs52f",
-            medicineName:"Paracitamol",
-            description:"pillllllllllllllllllllllllll",
-            catagory:"pill",
-            
-          },
-        ];
-
         setData(response);
 
       } catch (err) {
@@ -61,7 +41,7 @@ function Medicines() {
       <div className="container mx-auto py-10">
 
         <h2>Medicine List</h2>
-          <DataTable columns={columns} data={data} searchkey="medicineName"/>
+          <DataTable columns={columns} data={data} searchKey="name"/>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 import { Dialog, DialogTrigger, DialogContent, DialogOverlay, DialogHeader, DialogFooter, DialogClose } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+ 
 
 const ImageModal = ({ imageSrc, isOpen, onClose, title }) => {
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogOverlay className="fixed inset-0 bg-black opacity-50" />

@@ -1,7 +1,7 @@
 import React from 'react';
 import  { useState } from "react";
-import DatePicker from "react-datepicker"; // Import the DatePicker component
-import "react-datepicker/dist/react-datepicker.css"; // Import the styles
+import DatePicker from "react-datepicker"; 
+import "react-datepicker/dist/react-datepicker.css"; 
 import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -11,16 +11,15 @@ import * as z from "zod";
 import { useEffect } from 'react';
 import {toast} from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
-import {useParams} from 'react-router-dom';
 import Cookies from 'universal-cookie'; 
-
+import {useParams} from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 
 const cookies = new Cookies()
 
 // Define the validation schema using Zod
 const formSchema = z.object({
-  medicineId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid MongoDB ObjectID format"),
   
   quantity: z
       .string()
@@ -37,89 +36,94 @@ const formSchema = z.object({
 
   
 
-function UpdateInventoryMedicine() {
+function AddMedicineToInventory() {
   const user = cookies.get("user")
 
   const form = useForm({
     resolver: zodResolver(formSchema),
-    defaultValues: { 
-      medicineName: '',
+    defaultValues: {
       quantity: 10,
       price: 15,
       expiryDate: '',
     }
   });
 
-  const [medicines, setMedicines] = useState([])
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(null); 
-  const  {pharmacyId} = useParams()
+  const  {pharmacyId, inventoryId} = useParams()
   const [inventoryData, setInventoryData] = useState()
 
 
-  
-
+  //  handle submit
   const onSubmit = async (data) => {
     try {
 
-      const dataToSend = {...data,updatedBy:user.userId}
- 
-      const response = await fetch(`${BASE_URL}/pharmacies/${user?.pharmacyId}/inventory/${inventoryId}`, {
+      const dataToSend = {...data,medicineId:inventoryData.medicine,updatedBy:user.userId}
+      const response = await fetch(`${BASE_URL}/pharmacies/${pharmacyId}/inventory/${inventoryId}`, {
         method: 'PATCH',
         headers: {
-          'Content-Type': 'application/json', // Correct header for JSON requests
+          'Content-Type': 'application/json', 
         },
-        body: JSON.stringify(dataToSend), // Send the form data as JSON
+        body: JSON.stringify(dataToSend), 
       });
   
       if (!response.ok) {
-        // Handle non-2xx status codes
         const errorData = await response.json();
         toast.error(`Error: ${errorData.message || "Request failed"}`);
-        console.error("Error Details:", errorData);
         return;
       }
   
-      toast.success("Medicine Added Successfully.");
-      console.log("Success:", await response.json()); // Log response if needed
+      toast.success("Medicine Updated Successfully.");
+      navigate(-1);
     } catch (error) {
       // Handle network or unexpected errors
       toast.error("Something went wrong. Please try again.");
       console.error("Error Details:", error);
     }
-    console.log(data)
   };
 
  
   // Fetch medicines
   useEffect(() => {
-    //fetch inventory
+     
     const fetchInventory = async () => {
-      const response = await fetch(`${BASE_URL}/pharmacies/${pharmacyId}/inventory`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',  
-        },
-      });
-      const Inventory = await response.json();
-       
-      const formatedInventory = Inventory.map(inventory=>({
-        medicineName: inventory.medicineName,
-        quantity: inventory.quantity,
-        price: inventory.price,
-        expiryDate: inventory.expiryDate,      
-      }))
-
-      setInventoryData(formatedInventory)
-       
-    };
-    fetchInventory()
+          try {
+            const response = await fetch(`${BASE_URL}/pharmacies/${pharmacyId}/inventory`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            const Inventory = await response.json();
+      
+            if (Inventory.data.length > 0) {
+              const fetchedData = Inventory.data[0];  
+              setInventoryData(fetchedData);
+      
+              // Format the data for the form
+              form.reset({
+                quantity: fetchedData.quantity.toString() || "",
+                price: fetchedData.price.toString() || "",
+                expiryDate: new Date(fetchedData.expiryDate) || null, // Convert to Date object
+              });
+      
+              // Set the selected date for the DatePicker
+              setSelectedDate(new Date(fetchedData.expiryDate));
+            }
+          } catch (error) {
+            console.error("Error fetching inventory:", error);
+          }
+        };
+      
+        fetchInventory();
+    
   }, []);
 
 
   
   return (
     <div className="container py-16">
-      <h1 className="text-4xl font-bold mb-4">Update Medicine in Inventory</h1>
+      <h1 className="text-4xl font-bold mb-4">Add Medicine to Inventory</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
     <div className='grid gap-8 md:grid-cols-2 md:gap-32 items-center'>
@@ -127,10 +131,10 @@ function UpdateInventoryMedicine() {
           
           <div className='flex flex-col gap-8'>
       
-            {/* Medicine Name */}
-             
-            <p>Medicine Name </p>: <p>mkdjfkdj</p>
-            
+            {/* Medicine name */}
+            <div className='flex gap-2'>
+               <h2 className='font-medium'>Medicine Name :</h2> <p className='font-bold'>{inventoryData?.medicineName}</p> 
+            </div>
             {/* Medicine Quantity */}
             <FormField
               control={form.control}
@@ -191,11 +195,18 @@ function UpdateInventoryMedicine() {
             </div>
 
           </div>
-            <Button type="submit">Add Medicine</Button>
+            <Button type="submit">Update Medicine</Button>
           </form>
         </Form>
     </div>
   );
 }
 
-export default UpdateInventoryMedicine;
+export default AddMedicineToInventory;
+
+
+
+
+
+
+ 

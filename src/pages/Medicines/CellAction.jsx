@@ -12,11 +12,14 @@ import  {useNavigate,useLocation} from 'react-router-dom';
 export const CellAction = ({
     data
 }) => {
-     
+    
     const [loading, setLoading] = useState(false)
     const [open, setOpen] = useState(false)
     const navigate = useNavigate()
     const location = useLocation();
+
+ 
+
     const onCopy = (name) => {
         navigator.clipboard.writeText(name);
         toast.success("Medicine Name copied to clipboard.")
@@ -25,9 +28,13 @@ export const CellAction = ({
     const onDelete = async() => {
         try {
             setLoading(true)
-            const response = await axios.delete(`${BASE_URL}/pharmacies/${data.pharmacyId}/inventory/${data.medicineId}`)
-            toast.success("Medicine Removed from invontory successfully.")
-            window.location.reload();
+            const response = await axios.delete(`${BASE_URL}/medicines/${data._id}`)
+            toast.success("Medicine Removed from platform successfully.")
+            
+            setTimeout(() => {
+                navigate(0); // Triggering page reload
+            }, 2500);
+         
         } catch (error) {
             toast.error("Something Went Wrong")
         } finally {
@@ -47,8 +54,8 @@ export const CellAction = ({
         <AlertDialog
             isOpen={open}
             onClose={() => setOpen(false)}
-            title="Confirm Rejection"
-            message="Are you sure you want to Remove this medicine from inventory?"
+            title="Confirm Deletion"
+            message="Are you sure you want to Remove this medicine from the platform?"
             confirmText="Yes, Remove"
             cancelText="Cancel"
             onConfirm={Delete}
@@ -64,11 +71,11 @@ export const CellAction = ({
                 <DropdownMenuLabel>
                     Actions
                 </DropdownMenuLabel>
-                <DropdownMenuItem onClick={()=>onCopy(data.medicineName)}>
+                <DropdownMenuItem onClick={()=>onCopy(data.name)}>
                     <Copy className="mr-2 h-4 w-4"/>
                     Copy Medicine Name
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(`${location.pathname}/update/${data.inventoryId}`) }>
+                <DropdownMenuItem onClick={() => navigate(`${location.pathname}/${data._id}/update`) }>
                     <Edit className="mr-2 h-4 w-4"/>
                     Update
                 </DropdownMenuItem>

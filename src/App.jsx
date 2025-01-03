@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import SideMenu from "./components/SideMenu";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import SearchResults from "./pages/searchResult/SearchResult";
 import MedicineDetail from "./pages/medicineDetail/MedicineDetail";
 import PharmacyDetail from "./pages/pharmacyDetail/PharmacyDetail";
@@ -27,6 +27,7 @@ import SignUpPharmacistForm from "./pages/auth/SignUpPharmacist/SignUpPharmacist
 import ApplicationDetail from "./pages/applicationDetail/ApplicationDetail";
 import Inventory from "./pages/inventory/Inventory";
 import UpdateInventoryMedicine from "./pages/updateInventoryMedicine/UpdateInventoryMedicine";
+import UpdateMedicine from "./pages/updateMedicine/UpdateMedicine";
 
  
 
@@ -39,7 +40,7 @@ function App() {
     <Router>
       <ToastContainer
       // position="center"
-      // autoClose={5000} // Automatically closes after 5 seconds
+      autoClose={2000} // Automatically closes after 5 seconds
       // hideProgressBar={false} // Shows the progress bar
       // newestOnTop={false} // Toasts appear at the bottom
       // closeOnClick={true} // Closes the toast when clicked
@@ -65,13 +66,14 @@ function App() {
         <Route path="/searchResults" element={<SearchResults />} />
         <Route path="/medicineDetail/:id" element={<MedicineDetail />} />
         <Route path="/join-us" element={<JoinAsPharmacy />} />
-        <Route path="/add-medicine-admin" element={<AddMedicine />} />
        
        {/* admin */}
+        <Route path="/add-medicine-admin" element={<AddMedicine />} />
         <Route path="/applications" element={<ApplicationList />} />
         <Route path="/applications/:id" element={<ApplicationDetail />} />
         <Route path="/pharmacies" element={<Pharmacies />} />
         <Route path="/medicines" element={<Medicines />} />
+        <Route path="/medicines/:medicineId/update" element={<UpdateMedicine />} />
         <Route path="/approve" element={<ApprovePage />} />
 
         {/* pharmacist */}

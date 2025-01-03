@@ -39,7 +39,7 @@ export default function ApplicationDetail() {
   const approvePharmacy = async () => {
     try {
       const status = { status: "Approved" };
-      const response = await fetch(BASE_URL + `/applications/${id}/update`, {
+      const response = await fetch(BASE_URL + `/applications/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

@@ -13,9 +13,10 @@ const navLinksByRole = {
     ],
     admin: [
       { path: "/", label: "Admin Dashboard" },
-      { path: "/manage-pharmacies", label: "Pharmacies" },
-      { path: "/reports", label: "Medicines" },
-      { path: "/manage-pharmacies", label: "Applications" },
+      { path: "/pharmacies", label: "Pharmacies" },
+      { path: "/medicines", label: "Medicines" },
+      { path: "/add-medicine-admin", label: "Add Medicine" },
+      { path: "/applications", label: "Applications" },
     ],
     owner: [
         { path: "/", label: "Dashboard" },

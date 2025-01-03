@@ -12,7 +12,6 @@ const cookies = new Cookies()
 
 function Inventory() {
   const [data, setData] = useState([]);
-  console.log("🚀 ~ file: Inventory.jsx:12 ~ Inventory ~ data:", data)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
  

@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {toast} from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
 import {useNavigate} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 
 import * as z from "zod";
@@ -157,6 +158,13 @@ function SignupForm() {
           <Button type="submit" className="w-full">Sign Up</Button>
         </form>
       </Form>
+      {/* Additional Links */}
+      <div className="mt-4 text-center text-sm text-gray-500">
+        Already have an account?{" "}
+        <Link to="/sign-in" className="text-primary hover:underline">
+          Sign In
+        </Link>
+      </div>
     </div>
   );
 }
