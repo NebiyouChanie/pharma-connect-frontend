@@ -4,7 +4,6 @@ import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Search } from 'lucide-react'
 import {useNavigate} from 'react-router-dom'
-import { useSearchContext } from '@/context/searchContext';
 import { Link } from 'react-router-dom'
  
 
@@ -12,7 +11,6 @@ function HeroSection() {
   const [searchQuery, setSearchQuery] = useState(''); // State to store search input
   const [searchResults, setSearchResults] = useState([]); // State to store backend response
   const navigate =  useNavigate()
-  const {updateSearchResults} = useSearchContext();
 
 
   // 

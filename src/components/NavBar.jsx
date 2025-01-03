@@ -2,10 +2,13 @@ import React from 'react'
 import Logo from '../assets/Logo.svg'
 import { NavLink } from "react-router-dom";
 import navLinksByRole from "../constants/navLinks";
-import { useUserContext } from "@/context/roleContext";
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies()
 
 function NavBar() {
-  const { user } = useUserContext();  // Access user data from context
+  // const { user } = useUserContext();  // Access user data from context
+  const user = cookies.get("user")
 
   // Get the links based on the user's role, including pharmacyId for pharmacists
   const links = user?.role === "pharmacist" 
@@ -13,6 +16,7 @@ function NavBar() {
     : navLinksByRole[user?.role] || [];  // Default to other roles if no pharmacyId
 
   return (
+
     <header className='bg-lightbg py-6 shadow-md'>
       <div className='container flex justify-between items-center'>
         <div>

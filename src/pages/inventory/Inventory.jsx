@@ -3,8 +3,11 @@ import { columns } from "./Column";
 import { DataTable } from "../../components/ui/data-table";
 import {useParams} from 'react-router-dom'
 import {BASE_URL} from '../../lib/utils'
-import { useUserContext } from "@/context/roleContext";
+import Cookies from 'universal-cookie'; 
 
+
+
+const cookies = new Cookies()
 
 
 function Inventory() {
@@ -13,8 +16,7 @@ function Inventory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
  
-  const { user } = useUserContext();  // Access user data from context
-  
+const user = cookies.get("user")
 
   useEffect(() => {
     async function fetchData() {

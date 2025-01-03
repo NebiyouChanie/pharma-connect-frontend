@@ -3,10 +3,12 @@ import { NavLink } from "react-router-dom";
 import Logo from "../assets/Logo.svg";
 import navLinksByRole from "../constants/navLinks";
 import { CircleX, Menu } from "lucide-react";
-import { useUserContext } from "@/context/roleContext";
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies()
 
 function SideMenu() {
-  const { user } = useUserContext();
+  const user = cookies.get("user")
   const [isOpen, setIsOpen] = useState(false);
 
   // Check if the user is a pharmacist and pass the pharmacyId dynamically

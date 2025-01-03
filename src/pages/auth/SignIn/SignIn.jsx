@@ -1,6 +1,7 @@
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import Cookies from 'universal-cookie';
 import {
   Form,
   FormControl,
@@ -16,13 +17,14 @@ import * as z from "zod";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
-import { useUserContext } from "@/context/roleContext";
 
 // Zod schema for validation
 const signInSchema = z.object({
   email: z.string().nonempty("Email is required").email("Enter a valid email"),
   password: z.string().nonempty("Password is required"),
 });
+
+const cookies = new Cookies()
 
 function SignInForm() {
   const navigate = useNavigate();
@@ -34,32 +36,34 @@ function SignInForm() {
     },
   });
 
-  const { updateUser } = useUserContext()
+  
   const onSubmit = async (data) => {
     try {
       const response = await fetch(`${BASE_URL}/users/signIn`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json", // Correct header for JSON requests
+          "Content-Type": "application/json", 
         },
-        body: JSON.stringify(data), // Send the form data as JSON
+        body: JSON.stringify(data), 
       });
 
       if (!response.ok) {
-        // Handle non-2xx status codes
+       
         const errorData = await response.json();
         toast.error(`Error: ${errorData.message || "Request failed"}`);
         console.error("Error Details:", errorData);
         return;
       }
 
-      const dataa = await response.json()
+      const userData = await response.json()
 
-      // set role
-       updateUser(dataa)
+      // set user
+       cookies.set("user",userData)
+      //  cookies.set("user",null) logout
+
 
       toast.success("Signed In Succesfully.");
-      navigate(`/pharmacy-profile/${dataa.pharmacyId}`);
+      navigate(`/pharmacy-profile/${userData.pharmacyId}`);
     } catch (error) {
       // Handle network or unexpected errors
       toast.error("Something went wrong. Please try again.");

@@ -24,7 +24,6 @@ import SignInForm from "./pages/auth/SignIn/SignIn";
 import { SearchProvider } from "./context/searchContext";
 import ApprovePage from "./pages/approvePage/ApprovePage";
 import SignUpPharmacistForm from "./pages/auth/SignUpPharmacist/SignUpPharmacist";
-import {UserProvider } from "@/context/roleContext";
 import ApplicationDetail from "./pages/applicationDetail/ApplicationDetail";
 import Inventory from "./pages/inventory/Inventory";
 import UpdateInventoryMedicine from "./pages/updateInventoryMedicine/UpdateInventoryMedicine";
@@ -34,7 +33,6 @@ import UpdateInventoryMedicine from "./pages/updateInventoryMedicine/UpdateInven
 function App() {
   
   return (
-    <UserProvider>
 
     <SearchProvider>
     
@@ -88,7 +86,6 @@ function App() {
       </Routes>
     </Router>
   </SearchProvider>
-</UserProvider>
 
   );
 }

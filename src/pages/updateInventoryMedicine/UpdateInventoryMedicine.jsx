@@ -11,9 +11,12 @@ import * as z from "zod";
 import { useEffect } from 'react';
 import {toast} from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
-import Dropdown from '../../components/Dropdown'
-import { useUserContext } from "@/context/roleContext";
 import {useParams} from 'react-router-dom';
+import Cookies from 'universal-cookie'; 
+
+
+
+const cookies = new Cookies()
 
 // Define the validation schema using Zod
 const formSchema = z.object({
@@ -35,7 +38,8 @@ const formSchema = z.object({
   
 
 function UpdateInventoryMedicine() {
-  const { user } = useUserContext();  // Access user data from context
+  const user = cookies.get("user")
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: { 
