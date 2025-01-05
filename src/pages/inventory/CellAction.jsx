@@ -17,15 +17,16 @@ export const CellAction = ({
     const [open, setOpen] = useState(false)
     const navigate = useNavigate()
     const location = useLocation();
+
     const onCopy = (name) => {
         navigator.clipboard.writeText(name);
         toast.success("Medicine Name copied to clipboard.")
     }
-    
+    console.log(data._id)
     const onDelete = async() => {
         try {
             setLoading(true)
-            const response = await axios.delete(`${BASE_URL}/pharmacies/${data.pharmacyId}/inventory/${data.medicineId}`)
+            const response = await axios.delete(`${BASE_URL}/pharmacies/${data.pharmacy}/inventory/${data._id}`)
             toast.success("Medicine Removed from invontory successfully.")
             window.location.reload();
         } catch (error) {
@@ -37,7 +38,7 @@ export const CellAction = ({
     }
     
     const Delete = async () => {
-        setOpen(false); // Close the dialog
+        setOpen(false);  
         await onDelete();
       };
 
@@ -68,7 +69,7 @@ export const CellAction = ({
                     <Copy className="mr-2 h-4 w-4"/>
                     Copy Medicine Name
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate(`${location.pathname}/update/${data.inventoryId}`) }>
+                <DropdownMenuItem onClick={() => navigate(`${location.pathname}/${data._id}/update`) }>
                     <Edit className="mr-2 h-4 w-4"/>
                     Update
                 </DropdownMenuItem>

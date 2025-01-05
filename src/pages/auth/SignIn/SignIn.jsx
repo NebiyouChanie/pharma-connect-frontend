@@ -54,16 +54,24 @@ function SignInForm() {
         console.error("Error Details:", errorData);
         return;
       }
-
+ 
+    // Access the Authorization header
+      const authHeader = response.headers.get("Authorization");
+      if (authHeader) {
+        const token = authHeader.split(" ")[1];
+        localStorage.setItem("authToken", token); // Store the token in localStorage
+      } else {
+        console.error("Authorization header missing in the response.");
+      }
+      
       const userData = await response.json()
 
       // set user
-       cookies.set("user",userData)
+        cookies.set("user",userData.data)
 
       toast.success("Signed In Succesfully.");
       navigate(`/`);
     } catch (error) {
-      // Handle network or unexpected errors
       toast.error("Something went wrong. Please try again.");
       console.error("Error Details:", error);
     }

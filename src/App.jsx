@@ -28,6 +28,8 @@ import ApplicationDetail from "./pages/applicationDetail/ApplicationDetail";
 import Inventory from "./pages/inventory/Inventory";
 import UpdateInventoryMedicine from "./pages/updateInventoryMedicine/UpdateInventoryMedicine";
 import UpdateMedicine from "./pages/updateMedicine/UpdateMedicine";
+import PharmacistsList from "./pages/pharmacistList/PharmacistsList";
+import MyMedicines from "./pages/myMedicines/MyMedicines";
 
  
 
@@ -64,8 +66,9 @@ function App() {
         <Route path="/sign-up" element={<SignupForm/>} />
         <Route path="/sign-in" element={<SignInForm />} />
         <Route path="/searchResults" element={<SearchResults />} />
-        <Route path="/medicineDetail/:id" element={<MedicineDetail />} />
+        <Route path="/medicines/:id" element={<MedicineDetail />} />
         <Route path="/join-us" element={<JoinAsPharmacy />} />
+        <Route path="/my-medicines" element={<MyMedicines />} />
        
        {/* admin */}
         <Route path="/add-medicine-admin" element={<AddMedicine />} />
@@ -80,9 +83,11 @@ function App() {
         <Route path="/sign-up-pharmacist/:pharmacyId" element={<SignUpPharmacistForm/>} />
         <Route path="/add-medicine-to-inventory" element={<AddMedicineToInventory />} />
         <Route path="/pharmacy-profile/:id" element={<PharmacyDetail />} />
-        <Route path="/inventory/:id" element={<Inventory />} />
-        <Route path="/inventory/:pharmacyId/update/:inventoryId" element={<UpdateInventoryMedicine />} />
+        <Route path="/pharmacy-profile/:id/update" element={<UPdatePharmacyProfile />} />
+        <Route path="/:id/inventory" element={<Inventory />} />
+        <Route path="/:pharmacyId/inventory/:inventoryId/update" element={<UpdateInventoryMedicine />} />
         <Route path="/update-pharmacy-profile" element={<UPdatePharmacyProfile />} />
+        <Route path="/:pharmacyId/pharmacist" element={<PharmacistsList />} />
 
         {/* other routes*/}
       </Routes>

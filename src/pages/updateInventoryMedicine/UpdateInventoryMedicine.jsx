@@ -24,12 +24,12 @@ const formSchema = z.object({
   quantity: z
       .string()
       .min(1, "Quantity is required")
-      .transform((val) => parseInt(val, 10)) // Transform string to number
+      .transform((val) => parseInt(val, 10))  
       .refine((val) => val >= 1, { message: "Quantity must be at least 1" }),
   price: z
       .string()
       .min(1, "Price is required")
-      .transform((val) => parseFloat(val)) // Transform string to number
+      .transform((val) => parseFloat(val)) 
       .refine((val) => val >= 0.01, { message: "Price must be at least 0.01" }),
   expiryDate: z.date({ required_error: "Expiry date is required" }),
 });
@@ -83,51 +83,48 @@ function AddMedicineToInventory() {
   };
 
  
-  // Fetch medicines
   useEffect(() => {
-     
     const fetchInventory = async () => {
-          try {
-            const response = await fetch(`${BASE_URL}/pharmacies/${pharmacyId}/inventory`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
-            const Inventory = await response.json();
-      
-            if (Inventory.data.length > 0) {
-              const fetchedData = Inventory.data[0];  
-              setInventoryData(fetchedData);
-      
-              // Format the data for the form
-              form.reset({
-                quantity: fetchedData.quantity.toString() || "",
-                price: fetchedData.price.toString() || "",
-                expiryDate: new Date(fetchedData.expiryDate) || null, // Convert to Date object
-              });
-      
-              // Set the selected date for the DatePicker
-              setSelectedDate(new Date(fetchedData.expiryDate));
-            }
-          } catch (error) {
-            console.error("Error fetching inventory:", error);
-          }
-        };
-      
-        fetchInventory();
-    
-  }, []);
+      try {
+        const response = await fetch(`${BASE_URL}/pharmacies/${pharmacyId}/inventory/${inventoryId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        const inventory = await response.json();
+   
+        setInventoryData(inventory.data);  
+  
+        // Handle expiryDate properly
+        const fetchedExpiryDate = inventory.data?.expiryDate;
+        const expiryDate = fetchedExpiryDate ? new Date(fetchedExpiryDate) : null; // Ensure it's a valid Date or null
+  
+        form.reset({
+          quantity: inventory.data?.quantity || "",
+          price: inventory.data?.price || "",
+          expiryDate: expiryDate, // Reset expiryDate with a valid Date object
+        });
+  
+        setSelectedDate(expiryDate); // Set selectedDate for DatePicker
+  
+      } catch (error) {
+        console.error("Error fetching inventory:", error);
+      }
+    };
+  
+    fetchInventory();
+  }, [pharmacyId, inventoryId, form]);
+  
 
 
   
   return (
     <div className="container py-16">
-      <h1 className="text-4xl font-bold mb-4">Add Medicine to Inventory</h1>
+      <h1 className="text-4xl font-bold mb-4">Update Inventory</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
     <div className='grid gap-8 md:grid-cols-2 md:gap-32 items-center'>
-          
           
           <div className='flex flex-col gap-8'>
       
@@ -195,7 +192,7 @@ function AddMedicineToInventory() {
             </div>
 
           </div>
-            <Button type="submit">Update Medicine</Button>
+            <Button type="submit">Update</Button>
           </form>
         </Form>
     </div>

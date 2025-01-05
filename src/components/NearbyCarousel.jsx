@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/carousel"
 
 export function NearbyCarousel({pharmacies}) {
-  console.log("🚀 ~ file: NearbyCarousel.jsx:13 ~ NearbyCarousel ~ pharmacies:", pharmacies)
   return (
     <Carousel
       opts={{

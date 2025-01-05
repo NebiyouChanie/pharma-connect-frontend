@@ -9,12 +9,17 @@ import {
 import "leaflet/dist/leaflet.css";
 import { Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { BASE_URL } from "@/lib/utils";
 import { useParams } from "react-router-dom";
 import { columns } from "./Column";
 import { DataTable } from "../../components/ui/data-table";
+import Cookies from 'universal-cookie';
+import { Link } from "react-router-dom";
+import { Phone } from "lucide-react";
+import  ImageModal  from "@/components/Modal";
+
+const cookies = new Cookies();
 
 
 
@@ -44,8 +49,27 @@ export default function PharmacyDetail() {
   const [position, setPosition] = useState({ lat: null, lng: null });
   const [distance, setDistance] = useState(0);
   const [data, setData] = useState([]);
-  
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalImage, setModalImage] = useState("");
+    const [modalTitle, setModalTitle] = useState("");
+
+
+    // Handle opening the modal with image URL and title
+  const openModal = (imageUrl, title) => {
+    setModalImage(imageUrl);
+    setModalTitle(title);
+    setIsModalOpen(true);
+  };
+
+  // Handle closing the modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setModalImage(""); // Clear the image when closing the modal
+    setModalTitle(""); // Clear the title when closing the modal
+  };
+
+  const user = cookies.get('user');
 
   const loadPharmacyDetail = async (id) => {
     try {
@@ -144,10 +168,26 @@ export default function PharmacyDetail() {
 
 
   return (
-    <div className="container lg:px-24 xl:px-40">
-      <h3 className="text-3xl md:text-4xl mb-4 md:mb-8 font-bold text-black mt-12 md:mt-24 ">
-        {pharmacy.name}
-      </h3>
+    <div className="container lg:px-24 xl:px-40 mb-24">
+      <div className="flex justify-between items-center mt-20 mb-10">
+        <h3 className="text-3xl md:text-4xl  font-bold text-black  ">
+          {pharmacy.name}
+        </h3>
+        <div>
+        {   user?.role === "owner" || user?.role === "pharmacist" ?
+            <div>
+              <Button variant="outline">
+                <Link to={`/pharmacy-profile/${id}/update`}>
+                  Update profile
+                </Link>
+              </Button>
+            </div>:
+            <div>
+            <Button> <Phone /> <a href={`tel:${pharmacy.contactNumber}`}>Call</a></Button>
+          </div>
+      }
+        </div>
+      </div>
       
         <div className="  w-full   mb-24 text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-12 ">
           
@@ -177,8 +217,9 @@ export default function PharmacyDetail() {
           <div>
             <img
               src={pharmacy.pharmacyImage}
-              className="w-full object-cover h-[400px]"
+              className="w-full object-cover h-[400px] cursor-pointer"
               alt={pharmacy.name}
+              onClick={() => openModal(pharmacy.pharmacyImage, "Pharmacy Image")}
             />
           </div>
 
@@ -212,12 +253,20 @@ export default function PharmacyDetail() {
           Open in Google Maps
         </Button>
       
-     
-      <div className="mx-auto py-10">
-      
-              <h2 className="font-semibold text-2xl">Medicine List</h2>
+     {
+      user?.role === "owner" || user?.role === "pharmacist" ?
+            <></>:
+            <div className="mx-auto py-10">
+                <h2 className="font-semibold text-2xl">Medicine List</h2>
                 <DataTable columns={columns} data={data} searchKey="medicineName" />
             </div>
+      }
+       <ImageModal
+          imageSrc={modalImage} // The image to display in the modal
+          isOpen={isModalOpen}  // Controls whether the modal is open or not
+          onClose={closeModal}  // Handles closing the modal
+          title={modalTitle}    // Pass the title to the modal
+        />
     </div>
   );
 }

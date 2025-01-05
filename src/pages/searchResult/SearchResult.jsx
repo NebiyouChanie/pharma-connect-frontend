@@ -8,13 +8,17 @@ import { useSearchContext } from "@/context/searchContext";
 import SearchResultsCard from "./searchResultsCard/SearchResultsCard";
 import LocationFilter from "../../components/LocatioListDropDown";
 import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
 
 import { BASE_URL } from "@/lib/utils";
+import { NearbyCarousel } from "@/components/NearbyCarousel";
 
 export default function SearchResults() {
   const location = useLocation();
   const { searchQuery: initialSearchQuery } = location.state || {};
   const { updateSearchResults } = useSearchContext();
+    const navigate = useNavigate();
+  
 
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || "");
   const [userLocation, setUserLocation] = useState({});
@@ -25,6 +29,7 @@ export default function SearchResults() {
   const searchedResult = getSearchedResults();
   const [inputQuery, setInputQuery] = useState()
   const [resultsFor, setResultsFor] = useState()
+
   // Request user location
   const requestLocation = () => {
     if (!navigator.geolocation) {
@@ -167,9 +172,30 @@ export default function SearchResults() {
     setDisplayedResults(filteredResults);
   };
 
+const [nearBypharmacies, setNearBypharmacies] = useState([]);
+  
+  useEffect(() => {
+      async function fetchData() {
+        try {
+  
+          const response = await fetch(`${BASE_URL}/pharmacies`)
+          const responseJson = await response.json()
+          const pharmacies = responseJson.data
+          setNearBypharmacies(pharmacies)
+
+      } catch (err) {
+        console.log(err)
+      }  
+      }
+  
+      fetchData();
+      
+    }, []);
+
   return (
     <div className="container">
-      <div className="flex w-full max-w-sm items-center mt-8">
+      {/* search */}
+      <div className="flex w-full max-w-sm items-center mt-20">
         <Input
           type="text"
           placeholder="Search"
@@ -180,31 +206,50 @@ export default function SearchResults() {
           Search
         </Button>
       </div>
-      <h2 className="my-4 font-bold text-3xl">Results for: {resultsFor}</h2>
-      <div className="flex gap-8 mb-5">
-        <PriceRangeDropdown onSelect={handleFilter} />
-        <LocationFilter onSelect={handleLocationFilter} />
-        <Button variant="outline" onClick={requestLocation}>
-          Near Me
-        </Button>
-      </div>
-      <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
-        <Separator />
-        {!displayedResults?.length  ? (
-          <p>No results found</p>
-        ) : (
-          displayedResults?.map((result, index) => (
-            <SearchResultsCard
-              key={index}
-              pharmacyName={result.pharmacyName}
-              address={result.address}
-              distance={result.distance}
-              time={result.time}
-              price={result.price}
-            />
-          ))
-        )}
-      </div>
+
+
+      
+
+{  !searchQuery? 
+      <div className=" my-16">
+              <h3 className='text-2xl font-semibold mb-3'>Nearby pharmacies</h3>
+              <NearbyCarousel pharmacies={nearBypharmacies}/>
+            </div>:
+      <div>
+          {/* results for and filter buttons */}
+          <div className="my-4">
+            <h2 className=" font-bold text-2xl mb-4">Results for: {resultsFor}</h2>
+            <div className="flex gap-8 mb-5">
+              <PriceRangeDropdown onSelect={handleFilter} />
+              <LocationFilter onSelect={handleLocationFilter} />
+              <Button variant="outline" onClick={requestLocation}>
+                Near Me
+              </Button>
+            </div>
+          </div>
+
+
+          {/* results section */}
+          <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
+            <Separator />
+            {!displayedResults?.length  ? (
+              <p>No results found</p>
+            ) : (
+              displayedResults?.map((result, index) => (
+                <SearchResultsCard
+                key={index}
+                pharmacyName={result.pharmacyName}
+                address={result.address}
+                distance={result.distance}
+                time={result.time}
+                price={result.price}
+                pharmacyId={result.pharmacyId}
+                inventoryId={result.inventoryId}
+                />
+              ))
+            )}
+          </div>
+      </div>}
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import {CellAction}  from "./CellAction";
+import QuantityUpdater from "./QuantityUpdater";
 
 export const columns = [
     {
@@ -12,7 +13,9 @@ export const columns = [
     {
       accessorKey: "quantity",
       header: "Stock Quantity",
+      cell: ({row})=> <QuantityUpdater data={row.original}/>
     },
+
     {
       accessorKey: "price",
       header: () => <div>Price</div>,
@@ -42,6 +45,7 @@ export const columns = [
     
     {
       id: "actions",
+      header: "Actions",
       cell: ({row}) => <CellAction data={row.original}/>
     },
   ]

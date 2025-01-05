@@ -5,16 +5,17 @@ import navLinksByRole from "../constants/navLinks";
 import { CircleX, Menu } from "lucide-react";
 import Cookies from 'universal-cookie';
 
-const cookies = new Cookies()
+const cookies = new Cookies();
 
 function SideMenu() {
-  const user = cookies.get("user")
+  const user = cookies.get("user");
   const [isOpen, setIsOpen] = useState(false);
 
-  // Check if the user is a pharmacist and pass the pharmacyId dynamically
-  const links = user?.role === "pharmacist" 
-    ? navLinksByRole.pharmacist(user?.pharmacyId)  // Dynamically add pharmacyId
-    : navLinksByRole[user?.role] || [];  // Default links for other roles
+  // Determine the links for the user role
+  const links =
+    typeof navLinksByRole[user?.role] === "function"
+      ? navLinksByRole[user?.role](user?.pharmacyId) // Call function for dynamic roles
+      : navLinksByRole[user?.role] || []; // Use static links or empty array
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -27,7 +28,7 @@ function SideMenu() {
         <img src={Logo} alt="pharma connect logo" className="h-8" />
         <button onClick={toggleMenu}>
           {isOpen ? (
-            <p className="text-primary text-2xl"></p>  
+            <p className="text-primary text-2xl"></p>
           ) : (
             <Menu size={24} color="#286AA7" />
           )}
@@ -48,10 +49,10 @@ function SideMenu() {
         </div>
         <nav className="mt-4 text-primary">
           <ul className="space-y-4 px-4">
-            {links?.map((link) => (
+            {links.map((link) => (
               <li key={link.path}>
                 <NavLink
-                  to={link.path}
+                  to={link?.path}
                   className={({ isActive }) =>
                     isActive
                       ? "text-white bg-primary rounded-md px-4 py-2 block"
