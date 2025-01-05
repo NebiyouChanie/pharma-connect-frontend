@@ -7,31 +7,35 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import medicineImage from "../../assets/medicine.png";
 import { Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState, useEffect } from "react";
 import { BASE_URL } from "@/lib/utils";
 import { useParams } from "react-router-dom";
+import { columns } from "./Column";
+import { DataTable } from "../../components/ui/data-table";
 
-function MapClickHandler({ setCoordinates }) {
-  useMapEvents({
-    click: (e) => {
-      const { lat, lng } = e.latlng;
-      setCoordinates({ lat, lng });
-    },
-  });
-  return null;
-}
 
-function AutoFocusMarker({ position }) {
-  const map = useMap();
-  if (position) {
-    map.setView(position, map.getZoom());
-  }
-  return null;
-}
+
+
+// function MapClickHandler({ setCoordinates }) {
+//   useMapEvents({
+//     click: (e) => {
+//       const { lat, lng } = e.latlng;
+//       setCoordinates({ lat, lng });
+//     },
+//   });
+//   return null;
+// }
+
+// function AutoFocusMarker({ position }) {
+//   const map = useMap();
+//   if (position) {
+//     map.setView(position, map.getZoom());
+//   }
+//   return null;
+// }
 
 export default function PharmacyDetail() {
   const { id } = useParams();
@@ -39,6 +43,9 @@ export default function PharmacyDetail() {
   const [pharmacy, setPharmacy] = useState(null);
   const [position, setPosition] = useState({ lat: null, lng: null });
   const [distance, setDistance] = useState(0);
+  const [data, setData] = useState([]);
+  
+
 
   const loadPharmacyDetail = async (id) => {
     try {
@@ -50,6 +57,30 @@ export default function PharmacyDetail() {
       console.error("Error loading pharmacy details:", error.message);
     }
   };
+
+  useEffect(() => {
+      async function fetchData() {
+        try {
+          const response = await fetch(`${BASE_URL}/pharmacies/${id}/inventory`);
+          const responseJson = await response.json();
+          const formattedData = responseJson.data.map(item => ({
+            medicineName: item.medicineName,
+            category: item.category,
+            quantity: item.quantity,
+            price: item.price,
+            expiryDate: item.expiryDate,
+            createdAt: item.createdAt,
+            medicineId: item.medicine,
+            inventoryId: item._id,
+            pharmacyId: item.pharmacy,
+          }));
+          setData(formattedData);
+        } catch (err) {
+          console.log(err)
+        }  
+      }
+      fetchData();
+    }, []);
 
   useEffect(() => {
     loadPharmacyDetail(id);
@@ -103,65 +134,90 @@ export default function PharmacyDetail() {
     return <p>Loading pharmacy details...</p>;
   }
 
+
+  const renderDetailRow = (label, value) => (
+    <div className="flex justify-between py-2 ">
+      <span className="font-medium text-gray-700">{label}</span>
+      <span className="text-gray-600">{value || "N/A"}</span>
+    </div>
+  );
+
+
   return (
-    <div className="container mb-8">
-      <div className="flex items-center flex-col gap-8 mb-5">
-        <div className="mt-8 w-full text-gray-700 md:flex md:justify-center md:gap-8">
-          <div className="my-7 md:my-0 md:w-2/4">
-            <h3 className="text-2xl md:text-3xl mb-5 font-bold text-black">
-              {pharmacy.name}
-            </h3>
-            <p>Location: {pharmacy.address}</p>
-            <p>Owner: {pharmacy.ownerName}</p>
-            <p className="flex items-center gap-4 mb-8">
-              Distance: Around {distance.toFixed(2)} KM{" "}
+    <div className="container lg:px-24 xl:px-40">
+      <h3 className="text-3xl md:text-4xl mb-4 md:mb-8 font-bold text-black mt-12 md:mt-24 ">
+        {pharmacy.name}
+      </h3>
+      
+        <div className="  w-full   mb-24 text-gray-700 grid grid-cols-1 md:grid-cols-2 gap-12 ">
+          
+          {/* description */}
+          <div className="xl:max-w-[70%]">
+            <div>
+              {renderDetailRow("Owner Name", pharmacy.ownerName)}
+              {renderDetailRow("License Number", pharmacy.licenseNumber)}
+              {renderDetailRow("Email", pharmacy.email)}
+              {renderDetailRow("Contact Number", pharmacy.contactNumber)}
+              {renderDetailRow("Location", `${pharmacy.address}`)}
+              {renderDetailRow("City", `${pharmacy.city}`)}
+              {renderDetailRow("State", pharmacy.state)}
+              {renderDetailRow("Zip Code", pharmacy.zipCode)}
+            </div>
+                        
+            <div className="flex items-center gap-4 my-8">
+              <p className="font-medium text-gray-700">Distance :</p> Around {distance.toFixed(2)} KM{" "}
               <span className="flex gap-1 items-center font-semibold">
                 <Clock className="w-4 h-4" />~{Math.round((distance / 4) * 60)}{" "}
                 Min
               </span>
-              Distance: Around 4.6KM{" "}
-              <span className="flex gap-1 items-center font-semibold">
-                <Clock className="w-4 h-4" />
-                20Min
-              </span>
-            </p>
+            </div>
+
           </div>
-          <img
-            src={pharmacy.licenseImage || medicineImage}
-            className="w-full md:w-2/4"
-            alt={pharmacy.name}
-          />
-        </div>
-        <MapContainer
-          center={[coordinates.lat, coordinates.lng]}
-          zoom={13}
-          scrollWheelZoom={false}
-          style={{ width: "100%", height: "60vh" }}
-        >
-          <TileLayer
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          />
-          <Marker position={[coordinates.lat, coordinates.lng]}>
-            <Popup>
-              <strong>Clicked Location</strong>
-              <br />
-              Latitude: {coordinates.lat}
-              <br />
-              Longitude: {coordinates.lng}
-            </Popup>
-          </Marker>
-          <MapClickHandler setCoordinates={setCoordinates} />
-          <AutoFocusMarker position={[coordinates.lat, coordinates.lng]} />
-        </MapContainer>
+          {/* image */}
+          <div>
+            <img
+              src={pharmacy.pharmacyImage}
+              className="w-full object-cover h-[400px]"
+              alt={pharmacy.name}
+            />
+          </div>
+
+      </div>
+      <div className="mb-8">
+      <MapContainer
+        center={[coordinates.lat, coordinates.lng]}
+        zoom={13}
+        scrollWheelZoom={false}
+        style={{ width: "100%", height: "400px" }}
+      >
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
+        {/* Fixed Marker */}
+        <Marker position={[coordinates.lat, coordinates.lng]}>
+          <Popup>
+            <strong>Predefined Location</strong>
+            <br />
+            Latitude: {coordinates.lat}
+            <br />
+            Longitude: {coordinates.lng}
+          </Popup>
+        </Marker>
+      </MapContainer>
+
+      </div>
+
         <Button variant="outline" className="self-start">
           Open in Google Maps
         </Button>
-      </div>
-      <div className="flex w-full max-w-sm items-center mt-8">
-        <Input type="text" placeholder="Search from this pharmacy" />
-        <Button type="submit">Search</Button>
-      </div>
+      
+     
+      <div className="mx-auto py-10">
+      
+              <h2 className="font-semibold text-2xl">Medicine List</h2>
+                <DataTable columns={columns} data={data} searchKey="medicineName" />
+            </div>
     </div>
   );
 }
