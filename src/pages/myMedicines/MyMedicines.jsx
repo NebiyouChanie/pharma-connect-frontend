@@ -14,6 +14,10 @@ function MyMedicines() {
   const navigate = useNavigate()
 
   useEffect(()=>{
+    const authToken = localStorage.getItem("authToken");
+    if(!authToken ){
+      return
+    }
     const fetchMyMedicines = async () => {
       const response = await fetch(`${BASE_URL}/users/my-medicines`, {
         method: "GET",
@@ -51,13 +55,15 @@ function MyMedicines() {
         <div className='flex justify-between items-center mb-6'>
           <div>
             <h1 className='text-3xl font-semibold mb-1'>Saved Medicines</h1>
-            <p className='max-w-[80%] md:max-w-full text-gray-600'>you can save the pharmacies who stokes the medicine you searched.</p>
+            <p className='max-w-[80%] md:max-w-full text-gray-600'>You can save pharmacies that stock the medicines you searched for</p>
           </div>
            {!myMedicines?.length  ? <></>: <Button variant='destructive' className='h-fit' onClick={()=>{handleRemoveALLMyMedicines()}}><Trash />Remove All</Button>}
         </div>
-        <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80 ">
+        <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
           <Separator />
-          {!myMedicines?.length  ? (
+          {!token && <p className='text-gray-600'>Please log in to save searched medicines and pharmacies.</p>
+          }
+          {!myMedicines?.length && token  ? (
             <p className='text-gray-600'>You haven't saved any medicine yet.</p>
           ) : (
             myMedicines?.map((result, index) => (

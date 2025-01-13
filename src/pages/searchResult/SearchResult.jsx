@@ -17,37 +17,46 @@ export default function SearchResults() {
   const location = useLocation();
   const { searchQuery: initialSearchQuery } = location.state || {};
   const { updateSearchResults } = useSearchContext();
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   
 
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || "");
-  const [userLocation, setUserLocation] = useState({});
   const [displayedResults, setDisplayedResults] = useState([]);
   const [selectedRange, setSelectedRange] = useState(null);
 
-  const { getSearchedResults } = useSearchContext();
+  const { getSearchedResults,userLocation, updateUserLocation } = useSearchContext();
   const searchedResult = getSearchedResults();
   const [inputQuery, setInputQuery] = useState()
   const [resultsFor, setResultsFor] = useState()
-
+  
   // Request user location
-  const requestLocation = () => {
+const requestLocation = () => {
     if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser.");
-      return;
+        toast.error("Geolocation is not supported by your browser.");
+        return;
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+    (position) => {
         const { latitude, longitude } = position.coords;
-        setUserLocation({ latitude, longitude });
-      },
-      () => {
-        toast.error("Please connect to the internet.");
-      }
-    );
-  };
-
+        updateUserLocation({ latitude, longitude }); // Update location in context
+    },
+    (error) => {
+        if (error.code === error.PERMISSION_DENIED) {
+            toast.error(
+                "Location access denied. Please enable location services in your browser settings."
+            );
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+            toast.error("Location information is unavailable.");
+        } else if (error.code === error.TIMEOUT) {
+            toast.error("Request for location timed out.");
+        } else {
+            toast.error("An unknown error occurred while fetching location.");
+        }
+    }
+);
+};
+  
   // Fetch search results
   async function fetchResults(query) {
     try {
@@ -58,7 +67,7 @@ export default function SearchResults() {
         },
         body: JSON.stringify({ medicineName: query }),
       });
-
+      
       if (!response.ok) {
         if (response.status === 400) {
           setDisplayedResults([]); // Show "No results found"
@@ -69,21 +78,22 @@ export default function SearchResults() {
           toast.error("Unexpected error occurred");
         }
       }
-
+      
       const data = await response.json();
       updateSearchResults(data);
     } catch (error) {
       console.error("Error fetching search results:", error);
     }
   }
-
+  
   // handle serach input
   const handleSearchInput = () => {
+      requestLocation();
       setResultsFor(inputQuery)
       fetchResults(inputQuery);
   }
+
   useEffect(() => {
-    requestLocation();
     if (searchQuery) {
       setResultsFor(searchQuery)
       fetchResults(searchQuery);
@@ -112,25 +122,22 @@ export default function SearchResults() {
     }
   }, [userLocation, searchedResult]);
 
+
   // Calculate distance
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    const toRad = (value) => (value * Math.PI) / 180;
-    const dLat = toRad(lat2 - lat1);
-    const dLon = toRad(lon2 - lon1);
+    const R = 6371; // Radius of the Earth in km
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
     const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-    return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // Distance in km
   };
-
-  // Handle input search
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      fetchResults(searchQuery);
-    } else {
-      toast.warn("Please enter a search term.");
-    }
-  };
+  
 
   // Price filter
   const handleFilter = (range) => {
@@ -154,6 +161,7 @@ export default function SearchResults() {
     setDisplayedResults(filteredMedicine);
   };
 
+  // filter by location
   const handleLocationFilter = ({ subcity, part }) => {
     const filteredResults = searchedResult
       .filter((pharmacy) => pharmacy.address.split(",").includes(part))
@@ -172,6 +180,8 @@ export default function SearchResults() {
     setDisplayedResults(filteredResults);
   };
 
+
+  //near by caerosel
 const [nearBypharmacies, setNearBypharmacies] = useState([]);
   
   useEffect(() => {
@@ -184,13 +194,51 @@ const [nearBypharmacies, setNearBypharmacies] = useState([]);
           setNearBypharmacies(pharmacies)
 
       } catch (err) {
-        console.log(err)
       }  
       }
   
       fetchData();
       
     }, []);
+
+ 
+// handle "Near Me" functionality
+const filterPharmaciesNearMe = () => {
+  if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
+    toast.error("Please allow location access first.");
+    requestLocation();
+    return;
+  }
+
+  if (!searchedResult || searchedResult.length === 0) {
+    toast.info("No search results to filter.");
+    return;
+  }
+
+  const nearbyPharmacies = searchedResult.filter((pharmacy) => {
+    if (pharmacy.latitude && pharmacy.longitude) {
+      const distance = calculateDistance(
+        userLocation.latitude,
+        userLocation.longitude,
+        pharmacy.latitude,
+        pharmacy.longitude
+      );
+      return distance <= 5; // Only include pharmacies within 5 km
+    }
+    return false; // Skip pharmacies without valid coordinates
+  });
+
+  if (nearbyPharmacies.length === 0) {
+    toast.info("No pharmacies found within 5 km radius.");
+  } else {
+    setDisplayedResults(nearbyPharmacies);
+  }
+};
+
+
+
+
+
 
   return (
     <div className="container">
@@ -210,7 +258,7 @@ const [nearBypharmacies, setNearBypharmacies] = useState([]);
 
       
 
-{  !searchQuery? 
+{  !searchQuery && !searchedResult? 
       <div className=" my-16">
               <h3 className='text-2xl font-semibold mb-3'>Nearby pharmacies</h3>
               <NearbyCarousel pharmacies={nearBypharmacies}/>
@@ -222,7 +270,7 @@ const [nearBypharmacies, setNearBypharmacies] = useState([]);
             <div className="flex gap-8 mb-5">
               <PriceRangeDropdown onSelect={handleFilter} />
               <LocationFilter onSelect={handleLocationFilter} />
-              <Button variant="outline" onClick={requestLocation}>
+              <Button variant="outline" className="border-foregorund text-gray-700" onClick={filterPharmaciesNearMe}>
                 Near Me
               </Button>
             </div>
@@ -230,25 +278,39 @@ const [nearBypharmacies, setNearBypharmacies] = useState([]);
 
 
           {/* results section */}
-          <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
-            <Separator />
-            {!displayedResults?.length  ? (
-              <p>No results found</p>
-            ) : (
-              displayedResults?.map((result, index) => (
-                <SearchResultsCard
-                key={index}
-                pharmacyName={result.pharmacyName}
-                address={result.address}
-                distance={result.distance}
-                time={result.time}
-                price={result.price}
-                pharmacyId={result.pharmacyId}
-                inventoryId={result.inventoryId}
-                />
-              ))
-            )}
-          </div>
+          <div className="flex items-center gap-4">
+              {!userLocation.latitude || !userLocation.longitude ? (
+                    <div className="flex flex-wrap  lg:gap-4">
+                       <p className="text-red-600 mb-4">
+                       Enable your location to view the estimated distance and travel time to each pharmacy.                        </p>
+                        <Button variant="outline" className='h-fit py-1 px-2' onClick={requestLocation}>
+                          Allow Location
+                        </Button>
+                      </div>
+                    ) : null}
+            </div>
+
+
+            <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
+              <Separator />
+              {!displayedResults?.length ? (
+                <p>No results found</p>
+              ) : (
+                displayedResults?.map((result, index) => (
+                  <SearchResultsCard
+                    key={index}
+                    pharmacyName={result.pharmacyName}
+                    address={result.address}
+                    distance={result.distance}
+                    time={result.time}
+                    price={result.price}
+                    pharmacyId={result.pharmacyId}
+                    inventoryId={result.inventoryId}
+                  />
+                ))
+              )}
+            </div>
+
       </div>}
     </div>
   );

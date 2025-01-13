@@ -25,6 +25,7 @@ import {
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useState } from "react";
+import Cookies from 'universal-cookie';
 
 function MapClickHandler({ setCoordinates }) {
   useMapEvents({
@@ -39,7 +40,7 @@ function AutoFocusMarker({ position }) {
   const map = useMap();
 
   if (position) {
-    map.setView(position, map.getZoom()); // Update the map view to focus on the marker
+    map.setView(position, map.getZoom()); 
   }
 
   return null;
@@ -70,6 +71,9 @@ const formSchema = z.object({
 });
 
 function JoinAsPharmacy() {
+    const cookies = new Cookies();
+    const user = cookies.get('user');
+
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -91,21 +95,26 @@ function JoinAsPharmacy() {
 
   const onSubmit = async (data) => {
     try {
-      data = { ...data, latitude: coordinates.lat, longitude: coordinates.lng };
+
+      if(!user){
+        toast.error("Sign in to proceed with your application.")
+        return
+      }
+
+      data = { ...data, latitude: coordinates.lat, longitude: coordinates.lng, ownerId: user.userId};
 
       const response = await fetch(
         BASE_URL + `/applications/createApplication`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json", // Correct header for JSON requests
+            "Content-Type": "application/json",  
           },
-          body: JSON.stringify(data), // Send the form data as JSON
+          body: JSON.stringify(data),  
         }
       );
       console.log("response awaited");
       if (!response.ok) {
-        // Handle non-2xx status codes
         const errorData = await response.json();
         toast.error(`Error: ${errorData.message || "Request failed"}`);
         console.error("Error Details:", errorData);
@@ -113,9 +122,8 @@ function JoinAsPharmacy() {
       }
 
       toast.success("Application Submitted.");
-      console.log("Success:", await response.json()); // Log response if needed
+      console.log("Success:", await response.json());  
     } catch (error) {
-      // Handle network or unexpected errors
       toast.error("Something went wrong. Please try again.");
       console.error("Error Details:", error);
     }

@@ -51,7 +51,6 @@ function SignInForm() {
        
         const errorData = await response.json();
         toast.error(`Error: ${errorData.message || "Request failed"}`);
-        console.error("Error Details:", errorData);
         return;
       }
  

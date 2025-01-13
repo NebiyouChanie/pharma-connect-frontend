@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 function PriceRangeDropdown({ onSelect }) {
   const [selectedRange, setSelectedRange] = useState("Filter by Price");
@@ -28,9 +29,10 @@ function PriceRangeDropdown({ onSelect }) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="w-[150px] flex justify-start"
+          className="w-[150px] flex justify-start border-foregorund text-gray-700"
         >
           {selectedRange}
+          <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

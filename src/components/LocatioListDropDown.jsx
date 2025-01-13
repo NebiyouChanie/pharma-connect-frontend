@@ -52,7 +52,7 @@ export default function LocationDropdown({ onSelect }) {
           role="combobox"
           aria-expanded={open}
           aria-label="Select a location"
-          className="w-[200px] items-center flex justify-between gap-2"
+          className="w-[200px] items-center flex justify-between gap-2 border-foregorund text-gray-700"
         >
           {selectedLocation ? selectedLocation.label : "Select a Location"}
           <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />

@@ -16,11 +16,6 @@ function HeroSection() {
   // 
   const handleSearch = async (event) => {
     event.preventDefault();
-  
-    if (!searchQuery.trim()) {
-      alert("Please enter a search term.");
-      return;
-    }
     navigate('/searchResults', { state: { searchQuery } }); 
   }
  

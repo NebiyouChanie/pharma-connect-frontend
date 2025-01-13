@@ -7,16 +7,16 @@ import { Link } from 'react-router-dom';
 import { Button } from './ui/button';
 import { useNavigate } from 'react-router-dom';
 
-const cookies = new Cookies();
 
 function NavBar() {
   const navigate = useNavigate();
-const cookies = new Cookies();
+  const cookies = new Cookies();
   const user = cookies.get('user');
   const defaultNavLinks = navLinksByRole['user'];
 
   const handleSignOut = () => {
     cookies.set('user', null); // Logout
+    localStorage.setItem("authToken", "");
     navigate('/');
   };
 
@@ -39,15 +39,17 @@ const cookies = new Cookies();
             {links?.map((link) => (
               <li key={link.path}>
                 <NavLink
-                  to={link.path}
-                  className={({ isActive }) =>
-                    isActive
-                      ? 'text-white bg-primary rounded-2xl px-4 py-[6px] font-medium text-[18px] transition-all ease-in-out'
-                      : 'hover:text-white hover:bg-primary hover:rounded-2xl px-4 py-[6px] font-medium text-[18px] transition-all ease-in-out'
-                  }
-                >
-                  {link.label}
-                </NavLink>
+                    to={link.path}
+                    className={({ isActive }) =>
+                      isActive
+                      ? 'px-4 py-2 text-black   shadow-md border-b-2 rounded-none border-black transition-transform transform scale-105 ease-in-out'
+                      : 'px-4 py-2 text-black font-medium hover:border-b-2 hover:border-black hover:text-black hover:rounded-none transition-all ease-in-out'
+
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+
               </li>
             ))}
           </ul>
@@ -55,9 +57,11 @@ const cookies = new Cookies();
         {user ? (
           <Button onClick={handleSignOut}>Sign Out</Button>
         ) : (
-          <Button>
-            <Link to="/sign-in">Sign In</Link>
-          </Button>
+            <Link to="/sign-in">
+              <Button>
+              Sign In
+              </Button>
+            </Link>
         )}
       </div>
     </header>

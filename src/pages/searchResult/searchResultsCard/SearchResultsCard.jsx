@@ -5,14 +5,24 @@ import { Button } from "@/components/ui/button";
 import { BASE_URL } from "@/lib/utils";
 import { toast } from "react-toastify";
 import {useNavigate} from 'react-router-dom'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
+const user = cookies.get('user');
 
 export default function SearchResultsCard({pharmacyName, address, price, distance, time,pharmacyId,medicineId,inventoryId,isCart}) {
 
   const token = localStorage.getItem("authToken");  
   const navigate = useNavigate()
   const handleAddToMyMedicines = async() => {
+
     const data = {inventoryId: inventoryId}
     try {
+        if(!user){
+          toast.error("Sign in to save searched Pharmacies.")
+          return
+        }
+
         const response = await fetch(`${BASE_URL}/users/addtocart`,{
           method: "POST",
           headers: {
@@ -50,37 +60,66 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
   }
 
   return (
-    <div className="w-full md:w-[47%] text-xs lg:text-sm shadow-md text-gray-700 rounded-md border-gray-300 border overflow-hidden grid grid-cols-2 gap-4 pr-2">
-      <img className="h-full w-full object-cover" src={cardImage} alt="pharmacy entrance" />
-      <div className="flex flex-col py-2">
-        <h3 className="font-bold text-xl sm:text-lg mb-2">{pharmacyName}</h3>
-        <span className="flex items-center text-sm text-gray-600 gap-2">
-          <MapPin className="w-4 h-4" />
-           {address}
-        </span>
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
-        <span className="flex items-center gap-1">
-          
-          <p className="font-medium">Around</p> {Math.round((time / 4) * 60)}{" "}Min {"   "} |  {"   "} {Math.round((distance / 4) * 60) }{" "}Km
-        </span>
-         
-        </div>
-         <span className="font-semibold text-gray-800">Br {price}</span>
-         <div className="flex justify-between items-center">
-           <Link to={`/pharmacy-profile/${pharmacyId}`} className="text-blue-700 underline">
-              See pharmacy detail
-            </Link>
+    <Card className="w-full md:w-[47%] shadow-md border-gray-300 grid grid-cols-2 overflow-hidden">
+      {/* Image Section */}
+      <img
+        src={cardImage}
+        alt="pharmacy entrance"
+        className="h-full w-full object-cover col-span-1"
+      />
 
-            <div>
-              {
-                !isCart ?
-                    <Button className="py-1 px-2 h-fit text-xs flex" onClick={()=>{handleAddToMyMedicines()}}> Add to cart</Button>
-                :
-                    <Button className="py-1 px-2 h-fit text-xs flex" onClick={()=>{handleRemoveFromMyMedicines()}}>Remove</Button>
-              }
-           </div>
-         </div>
-      </div>
-    </div>
+      {/* Content Section */}
+      <CardContent className="col-span-1 p-4 flex flex-col gap-2">
+        {/* Pharmacy Name */}
+        <CardHeader className="p-0">
+          <CardTitle className="font-bold text-start text-lg sm:text-xl">{pharmacyName}</CardTitle>
+        </CardHeader>
+
+        {/* Address */}
+        <div className="flex items-center text-sm text-gray-600 gap-2">
+          <MapPin className="w-4 h-4" />
+          <span>{address}</span>
+        </div>
+
+        {/* Distance and Time */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
+          <span className="flex items-center gap-1">
+            <p className="font-medium">Around</p> {Math.round((time / 4) * 60)} Min | {Math.round((distance / 4) * 60)} Km
+          </span>
+        </div>
+
+        {/* Price */}
+        <span className="font-semibold text-gray-800">Br {price}</span>
+
+        {/* Footer Section */}
+        <CardFooter className="flex justify-between  pt-2 p-0 ">
+          <Link
+            to={`/pharmacy-profile/${pharmacyId}`}
+            className="text-blue-700 underline text-sm"
+          >
+            See pharmacy detail
+          </Link>
+
+          {/* Add/Remove Button */}
+          <div>
+            {!isCart ? (
+              <Button
+                className="py-1 px-2 h-fit text-xs"
+                onClick={handleAddToMyMedicines}
+              >
+                Add to cart
+              </Button>
+            ) : (
+              <Button
+                className="py-1 px-2 h-fit text-xs"
+                onClick={handleRemoveFromMyMedicines}
+              >
+                Remove
+              </Button>
+            )}
+          </div>
+        </CardFooter>
+      </CardContent>
+    </Card>
   );
 }
