@@ -8,7 +8,7 @@ import PharmacyDetail from "./pages/pharmacyDetail/PharmacyDetail";
 
 import AddMedicine from "./pages/addMedicine/AddMedicine";
 
-import AddMedicineToInventory from "./pages/addMedicineInventory/addMedicineToInventory";
+import AddMedicineToInventory from "./pages/addMedicineInventory/AddMedicineToInventory";
 import UPdatePharmacyProfile from "./pages/UpdatePharmacy/UpdatePharmacyProfile";
 import JoinAsPharmacy from "./pages/JoinAsPharmacy/JoinAsPharmacy";
 
