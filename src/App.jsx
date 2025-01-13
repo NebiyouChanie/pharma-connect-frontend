@@ -63,6 +63,7 @@ function App() {
       {/* Routes */}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route index element={<Home />} />
         <Route path="/sign-up" element={<SignupForm/>} />
         <Route path="/sign-in" element={<SignInForm />} />
         <Route path="/searchResults" element={<SearchResults />} />

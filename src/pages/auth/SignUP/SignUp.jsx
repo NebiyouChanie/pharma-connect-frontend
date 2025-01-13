@@ -78,9 +78,10 @@ function SignupForm() {
         console.error("Error Details:", error);
       }
     };
+    
 
   return (
-    <div className="max-w-md mx-auto py-10">
+    <div className=" container max-w-[80%] md:max-w-md mx-auto py-10">
       <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -170,3 +171,4 @@ function SignupForm() {
 }
 
 export default SignupForm;
+

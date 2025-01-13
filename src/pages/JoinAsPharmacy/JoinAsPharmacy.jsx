@@ -128,7 +128,7 @@ function JoinAsPharmacy() {
       console.error("Error Details:", error);
     }
   };
-
+  
 
   const [coordinates, setCoordinates] = useState({ lat: 9.03, lng: 38.74 });
   return (
@@ -282,7 +282,7 @@ function JoinAsPharmacy() {
                 )}
               />
 
-              <div className="flex gap-10">
+              <div className="grid gap-4 lg:grid-cols-2 lg:gap-16">
                 {/* License Image Upload */}
                 <FormField
                   control={form.control}
@@ -349,3 +349,4 @@ function JoinAsPharmacy() {
 }
 
 export default JoinAsPharmacy;
+

@@ -51,7 +51,7 @@ function MyMedicines() {
     }
 
   return (
-    <div className='container my-16'>
+    <div className='container my-8 md:my-16'>
         <div className='flex justify-between items-center mb-6'>
           <div>
             <h1 className='text-3xl font-semibold mb-1'>Saved Medicines</h1>

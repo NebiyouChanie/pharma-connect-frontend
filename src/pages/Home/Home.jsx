@@ -33,9 +33,11 @@ function Home() {
       <div className="container">
         <HeroSection />
       </div>
-      <div className="container my-16">
-        <h3 className='text-2xl font-semibold mb-3'>Nearby pharmacies</h3>
-        <NearbyCarousel pharmacies={nearBypharmacies}/>
+      <div className="container">
+        <div className="">
+          <h3 className='text-2xl font-semibold mb-3'>Nearby pharmacies</h3>
+          <NearbyCarousel pharmacies={nearBypharmacies}/>
+        </div>
       </div>
 
 
@@ -76,6 +78,7 @@ function Home() {
             </div>
           </div>
       </section>
+      
 
       {/* product demo */}
       <section className='bg-lightbg py-32'>
@@ -98,3 +101,4 @@ function Home() {
 }
 
 export default Home
+

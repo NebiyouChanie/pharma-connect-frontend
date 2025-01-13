@@ -215,6 +215,7 @@ const filterPharmaciesNearMe = () => {
     return;
   }
 
+  // Filter pharmacies within 5 km radius
   const nearbyPharmacies = searchedResult.filter((pharmacy) => {
     if (pharmacy.latitude && pharmacy.longitude) {
       const distance = calculateDistance(
@@ -223,19 +224,21 @@ const filterPharmaciesNearMe = () => {
         pharmacy.latitude,
         pharmacy.longitude
       );
-      return distance <= 5; // Only include pharmacies within 5 km
+      pharmacy.distance=distance
+      pharmacy.time=distance*2
+
+      return distance <=2; // Only include pharmacies within 5 km
     }
     return false; // Skip pharmacies without valid coordinates
   });
 
   if (nearbyPharmacies.length === 0) {
     toast.info("No pharmacies found within 5 km radius.");
+    setDisplayedResults([]); // Clear displayed results
   } else {
-    setDisplayedResults(nearbyPharmacies);
+    setDisplayedResults(nearbyPharmacies); // Update displayed results
   }
 };
-
-
 
 
 
@@ -267,7 +270,7 @@ const filterPharmaciesNearMe = () => {
           {/* results for and filter buttons */}
           <div className="my-4">
             <h2 className=" font-bold text-2xl mb-4">Results for: {resultsFor}</h2>
-            <div className="flex gap-8 mb-5">
+            <div className="flex flex-wrap gap-2 md:gap-8 mb-5">
               <PriceRangeDropdown onSelect={handleFilter} />
               <LocationFilter onSelect={handleLocationFilter} />
               <Button variant="outline" className="border-foregorund text-gray-700" onClick={filterPharmaciesNearMe}>
