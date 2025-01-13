@@ -1,5 +1,5 @@
 import { MapPin, Clock } from "lucide-react";
-import cardImage from "../../../assets/aboutUS.png";
+// import cardImage from "../../../assets/aboutUS.png";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { BASE_URL } from "@/lib/utils";
@@ -63,7 +63,7 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
     <Card className="w-full md:w-[47%] shadow-md border-gray-300 grid grid-cols-2 overflow-hidden">
       {/* Image Section */}
       <img
-        src={cardImage}
+        src=""
         alt="pharmacy entrance"
         className="h-full w-full object-cover col-span-1"
       />

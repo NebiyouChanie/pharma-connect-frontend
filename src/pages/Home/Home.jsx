@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HeroSection from '../../components/HeroSection'
-import aboutusImage from '../../assets/aboutUS.png'
+// import aboutusImage from '../../assets/aboutUS.png'
 import productDemoIllustration from '../../assets/productDemoIllustration.svg'
 import { NearbyCarousel } from '@/components/NearbyCarousel'
 import {BASE_URL} from '../../lib/utils'
@@ -43,7 +43,7 @@ function Home() {
       <section className='bg-lightbg py-32'>
         <div className='container grid lg:grid-cols-2 gap-8 items-center'>
             <div className='order'>
-              <img src={aboutusImage} alt="pharma connect team members"  />
+              <img src="" alt="pharma connect team members"  />
             </div>
             <div>
               <h2 className='font-bold text-5xl mb-6 text-primary'>About US</h2>
@@ -60,7 +60,7 @@ function Home() {
       <section className='py-52'>
         <div className='container grid lg:grid-cols-2 gap-8 items-center'>
             <div className='order'>
-              <img src={aboutusImage} alt="pharma connect team members"  />
+              <img src="" alt="pharma connect team members"  />
             </div>
             <div className='order-first lg:max-w-[90%]'>
               <h2 className='font-bold text-5xl mb-6 text-primary'>Why to join us?</h2>
