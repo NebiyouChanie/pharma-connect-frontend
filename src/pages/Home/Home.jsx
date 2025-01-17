@@ -52,9 +52,16 @@ function Home() {
             <div>
               <h2 className='font-bold text-3xl md:text-4xl lg:text-5xl mb-6 text-primary'>About US</h2>
               <div className='text-bodyText lg:max-w-[90%]'>
-                <p className='mb-4'>At Pharma Connect, we’re all about making it easier for you to find the medicines you need. Our platform connects you with pharmacies across the city, so you can quickly search for medicines, compare prices, and check availability all in one place.</p>
-                <p className='mb-4'>At Pharma Connect, we’re all about making it easier you need. Our platform connects you with pharmacies across the city, so you can quickly search for medicines, compare prices, and check availability all in one place.</p>
-                <p className='mb-4'>At Pharma Connect, we’re all about making it easie with pharmacies across the city, so you can quickly search for medicines, compare prices, and check availability all in one place.</p>
+                <p className='mb-4'>At Pharma Connect, we’re dedicated to making it easier for you to find the medicines you 
+                        need. Our platform connects you with trusted pharmacies across the city, giving you access to medicine 
+                        availability, prices, and locations all in one place. With a quick search, you can compare prices and
+                         check real-time availability to save time and avoid unnecessary trips.
+                </p>
+                
+              <p> 
+                Pharma Connect ensures that finding the right medicine is simple, efficient, and hassle-free.
+                  We believe in leveraging technology to improve access to healthcare. By connecting people to pharmacies seamlessly, Pharma Connect is transforming the way you find and access the medicines you need.
+               </p>
               </div>
             </div>
           </div>

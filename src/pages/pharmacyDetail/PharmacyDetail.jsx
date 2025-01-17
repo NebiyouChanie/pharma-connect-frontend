@@ -229,7 +229,7 @@ export default function PharmacyDetail() {
         center={[coordinates.lat, coordinates.lng]}
         zoom={13}
         scrollWheelZoom={false}
-        style={{ width: "100%", height: "400px" }}
+        style={{ width: "100%", height: "400px", zIndex: -1 }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
