@@ -39,6 +39,7 @@ const formSchema = z.object({
 
 function AddMedicineToInventory() {
   const user = cookies.get("user")
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -55,11 +56,8 @@ function AddMedicineToInventory() {
 
   const onSubmit = async (data) => {
     try {
-
+      setIsSubmitting(true)
       const dataToSend = {...data,updatedBy:user.userId}
-      console.log("🚀 ~ file: AddMedicineToInventory.jsx:60 ~ onSubmit ~ dataToSend:", dataToSend)
- 
-      console.log("🚀 ~ file: AddMedicineToInventory.jsx:64 ~ onSubmit ~ pharmacyId:", user.pharmacyId)
       const response = await fetch(`${BASE_URL}/pharmacies/${user?.pharmacyId}/inventory`, {
         method: 'POST',
         headers: {
@@ -82,6 +80,8 @@ function AddMedicineToInventory() {
       // Handle network or unexpected errors
       toast.error("Something went wrong. Please try again.");
       console.error("Error Details:", error);
+    }finally {
+      setIsSubmitting(false)
     }
   };
 
@@ -105,8 +105,8 @@ function AddMedicineToInventory() {
 
   
   return (
-    <div className="container py-16">
-      <h1 className="text-4xl font-bold mb-4">Add Medicine to Inventory</h1>
+    <div className="container py-8">
+      <h1 className="text-3xl md:text-4xl  font-bold mb-8">Add Medicine to Inventory</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
     <div className='grid gap-8 md:grid-cols-2 md:gap-32 items-center'>
@@ -189,7 +189,9 @@ function AddMedicineToInventory() {
             </div>
 
           </div>
-            <Button type="submit">Add Medicine</Button>
+            <Button type="submit" disabled={isSubmitting} className="w-fit">
+                {isSubmitting ? "Adding Medicine..." : "Add Medicine"}
+            </Button>
           </form>
         </Form>
     </div>

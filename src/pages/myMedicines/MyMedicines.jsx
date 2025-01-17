@@ -6,13 +6,18 @@ import { Button } from '@/components/ui/button';
 import { Trash } from 'lucide-react';
 import { toast } from "react-toastify";
 import {useNavigate} from 'react-router-dom'
+import Footer from '@/components/Footer';
+import Cookies from 'universal-cookie';
 
+
+const cookies = new Cookies();
 function MyMedicines() {
   const [myMedicines, setMyMedicines] =useState()
-  console.log("🚀 ~ file: MyMedicines.jsx:12 ~ MyMedicines ~ myMedicines:", myMedicines)
   const isCart= true;
   const token = localStorage.getItem("authToken");  
   const navigate = useNavigate()
+  const user = cookies.get('user');
+
 
   useEffect(()=>{
     const authToken = localStorage.getItem("authToken");
@@ -52,38 +57,41 @@ function MyMedicines() {
     }
 
   return (
-    <div className='container my-8 md:my-16'>
-        <div className='flex justify-between items-center mb-6'>
-          <div>
-            <h1 className='text-3xl font-semibold mb-1'>Saved Medicines</h1>
-            <p className='max-w-[80%] md:max-w-full text-gray-600'>You can save pharmacies that stock the medicines you searched for</p>
+    <div>
+      <div className='container my-8 md:my-16 min-h-screen'>
+          <div className='flex justify-between items-center mb-6'>
+            <div>
+              <h1 className='text-3xl font-semibold mb-1'>Saved Medicines</h1>
+              <p className='max-w-[80%] md:max-w-full text-gray-600'>You can save pharmacies that stock the medicines you searched for</p>
+            </div>
+            {!myMedicines?.length  ? <></>: <Button variant='destructive' className='h-fit' onClick={()=>{handleRemoveALLMyMedicines()}}><Trash />Remove All</Button>}
           </div>
-           {!myMedicines?.length  ? <></>: <Button variant='destructive' className='h-fit' onClick={()=>{handleRemoveALLMyMedicines()}}><Trash />Remove All</Button>}
-        </div>
-        <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
-          <Separator />
-          {!token && <p className='text-gray-600'>Please log in to save searched medicines and pharmacies.</p>
-          }
-          {!myMedicines?.length && token  ? (
-            <p className='text-gray-600'>You haven't saved any medicine yet.</p>
-          ) : (
-            myMedicines?.map((result, index) => (
-              <SearchResultsCard
-              key={index}
-              pharmacyName={result.pharmacyName}
-              address={result.address}
-              distance={result.distance}
-              time={result.time}
-              price={result.price}
-              pharmacyId={result.pharmacyId}
-              medicineId={result.medicineId}
-              medicineName={result.medicineName}
-              image={result.photo}
-              isCart
-              />
-            ))
-          )}
-        </div>
+          <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
+            <Separator />
+            {!token && <p className='text-gray-600'>Please log in to save searched medicines and pharmacies.</p>
+            }
+            {!myMedicines?.length && token  ? (
+              <p className='text-gray-600'>You haven't saved any medicine yet.</p>
+            ) : (
+              myMedicines?.map((result, index) => (
+                <SearchResultsCard
+                key={index}
+                pharmacyName={result.pharmacyName}
+                address={result.address}
+                distance={result.distance}
+                time={result.time}
+                price={result.price}
+                pharmacyId={result.pharmacyId}
+                medicineId={result.medicineId}
+                medicineName={result.medicineName}
+                image={result.photo}
+                isCart
+                />
+              ))
+            )}
+          </div>
+      </div>
+      <Footer />
     </div>
   )
 }

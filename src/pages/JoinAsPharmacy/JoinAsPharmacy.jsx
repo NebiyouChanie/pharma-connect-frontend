@@ -26,6 +26,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import { useState } from "react";
 import Cookies from 'universal-cookie';
+import Footer from "@/components/Footer";
 
 function MapClickHandler({ setCoordinates }) {
   useMapEvents({
@@ -73,7 +74,8 @@ const formSchema = z.object({
 function JoinAsPharmacy() {
     const cookies = new Cookies();
     const user = cookies.get('user');
-
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -95,7 +97,7 @@ function JoinAsPharmacy() {
 
   const onSubmit = async (data) => {
     try {
-
+      setIsSubmitting(true)
       if(!user){
         toast.error("Sign in to proceed with your application.")
         return
@@ -126,19 +128,19 @@ function JoinAsPharmacy() {
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       console.error("Error Details:", error);
+    }finally {
+      setIsSubmitting(false)
     }
   };
   
 
   const [coordinates, setCoordinates] = useState({ lat: 9.03, lng: 38.74 });
   return (
+    <div>
     <div className="container py-16">
       <h1 className="text-4xl font-bold mb-4">Join Us As A Pharmacy</h1>
-      <p className="mb-4 text-gray-500">
-        At PharmaConnect, we’re all about making it easier for you to find the
-        medicines you need. Our platform connects you with pharmacies across the
-        city, so you can quickly search for medicines, compare prices, and check
-        availability—all in one place.
+      <p className="mb-16 text-gray-500 lg:max-w-[60%]">
+      To join our Pharmacy Partner Program, simply fill out the form below with your pharmacy's details, including licensing information and the services you offer. Once you submit your application, our team will carefully review it to ensure it meets our quality standards. Upon approval, you’ll gain access to your personalized dashboard, where you can start connecting with more customers and showcasing your offerings. To speed up the approval process, make sure all the details you provide are accurate and complete. 
       </p>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -341,9 +343,13 @@ function JoinAsPharmacy() {
               </MapContainer>
             </div>
           </div>
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={isSubmitting} className="w-fit">
+              {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
         </form>
       </Form>
+    </div>
+    <Footer />
     </div>
   );
 }

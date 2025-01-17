@@ -37,7 +37,7 @@ const user = cookies.get("user")
   return (
     <div>
       <div className="container mx-auto py-10">
-          <h2>Pharmacist List</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-8">Pharmacist List</h2>
           <DataTable columns={columns} data={data} searchKey="firstName" />
       <div className="mt-8">
         <ReferalLink 

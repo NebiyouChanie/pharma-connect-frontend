@@ -34,7 +34,7 @@ function Pharmacies() {
     <div>
       <div className="container mx-auto py-10">
 
-        <h2>Pharmacies </h2>
+        <h2 className="text-3xl md:text-4xl font-bold mb-8">Pharmacies </h2>
         <DataTable columns={columns} data={data} searchKey="name" />
       </div>
     </div>

@@ -17,6 +17,7 @@ import * as z from "zod";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 // Zod schema for validation
 const signInSchema = z.object({
@@ -27,6 +28,7 @@ const signInSchema = z.object({
 const cookies = new Cookies()
 
 function SignInForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(signInSchema),
@@ -39,6 +41,7 @@ function SignInForm() {
   
   const onSubmit = async (data) => {
     try {
+      setIsSubmitting(true)
       const response = await fetch(`${BASE_URL}/users/signIn`, {
         method: "POST",
         headers: {
@@ -46,15 +49,15 @@ function SignInForm() {
         },
         body: JSON.stringify(data), 
       });
-
+      
       if (!response.ok) {
-       
+        
         const errorData = await response.json();
         toast.error(`Error: ${errorData.message || "Request failed"}`);
         return;
       }
- 
-    // Access the Authorization header
+      
+      // Access the Authorization header
       const authHeader = response.headers.get("Authorization");
       if (authHeader) {
         const token = authHeader.split(" ")[1];
@@ -64,21 +67,23 @@ function SignInForm() {
       }
       
       const userData = await response.json()
-
+      
       // set user
-        cookies.set("user",userData.data)
-
+      cookies.set("user",userData.data)
+      
       toast.success("Signed In Succesfully.");
       navigate(`/`);
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       console.error("Error Details:", error);
+    }finally {
+      setIsSubmitting(false)
     }
   };
   
 
   return (
-    <div className="container max-w-[80%] md:max-w-md py-10">
+    <div className="container max-w-[90%] md:max-w-[600px]  py-10">
       <h1 className="text-2xl font-bold mb-6 text-center">Sign In</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -128,8 +133,8 @@ function SignInForm() {
             </Link>
           </div>
           {/* Submit Button */}
-          <Button type="submit" className="w-full">
-            Sign In
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+             {isSubmitting ? "Signing In..." : "Sign In"}
           </Button>
         </form>
       </Form>

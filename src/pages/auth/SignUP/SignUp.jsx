@@ -8,6 +8,7 @@ import {toast} from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
 import {useNavigate} from 'react-router-dom'
 import { Link } from "react-router-dom";
+import { useState } from "react";
 
 
 import * as z from "zod";
@@ -36,7 +37,7 @@ const signupSchema = z
 
 function SignupForm() {
   const navigate =  useNavigate()
-  
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const form = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -50,7 +51,7 @@ function SignupForm() {
 
   const onSubmit = async (data) => {
       try {
-         
+        setIsSubmitting(true)
         const response = await fetch(
           `${BASE_URL}/users/signUp`,
           {
@@ -76,12 +77,14 @@ function SignupForm() {
         // Handle network or unexpected errors
         toast.error("Something went wrong. Please try again.");
         console.error("Error Details:", error);
+      }finally {
+        setIsSubmitting(false)
       }
     };
     
 
   return (
-    <div className=" container max-w-[80%] md:max-w-md mx-auto py-10">
+    <div className=" container max-w-[90%] md:max-w-[600px] mx-auto py-10">
       <h1 className="text-2xl font-bold mb-6 text-center">Sign Up</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -156,7 +159,9 @@ function SignupForm() {
             )}
           />
           {/* Submit Button */}
-          <Button type="submit" className="w-full">Sign Up</Button>
+          <Button type="submit" disabled={isSubmitting} className="w-full">
+              {isSubmitting ? "Signing Up..." : "Sign Up"}
+          </Button>
         </form>
       </Form>
       {/* Additional Links */}

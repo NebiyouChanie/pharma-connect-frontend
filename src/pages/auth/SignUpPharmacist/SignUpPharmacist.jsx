@@ -14,6 +14,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-toastify";
 import { BASE_URL } from "@/lib/utils";
 import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 
 import * as z from "zod";
@@ -40,6 +41,7 @@ const signupSchema = z
   });
 
 function SignUpPharmacistForm() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const navigate = useNavigate();
   const {pharmacyId} = useParams();
 
@@ -57,6 +59,7 @@ function SignUpPharmacistForm() {
 
   const onSubmit = async (data) => {
     try {
+      setIsSubmitting(true)
       data = {...data, role:"pharmacist", pharmacyId:pharmacyId}
       const response = await fetch(`${BASE_URL}/users/signUp`, {
         method: "POST",
@@ -78,12 +81,14 @@ function SignUpPharmacistForm() {
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       console.error("Error Details:", error);
+    }finally {
+      setIsSubmitting(false)
     }
   };
   
 
   return (
-    <div className="container max-w-[80%] md:max-w-md mx-auto py-10">
+    <div className="container max-w-[90%] md:max-w-[600px] mx-auto py-10">
       <h1 className="text-2xl font-bold mb-6 text-center">Sign Up As pharmacist</h1>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -188,8 +193,8 @@ function SignUpPharmacistForm() {
             )}
           />
           {/* Submit Button */}
-          <Button type="submit" className="w-full">
-            Sign Up
+          <Button type="submit" dis className="w-full">
+              {isSubmitting ? "Signing Up..." : "Sign Up"}
           </Button>
         </form>
       </Form>

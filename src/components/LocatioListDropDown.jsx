@@ -10,7 +10,7 @@ import { CommandItem } from "cmdk";
 const addisAbabaData = {
   "Addis Ababa": {
     "subcities": {
-      "Bole": ["CMC", "Gerji", "Goro", "Bisrate Gabriel", "Airport"],
+      "Bole": ["CMC", "Gerji", "Goro", "Bisrate Gabriel", "Airport","Ras Desta Damtew St"],
       "Kirkos": ["Kazanchis", "Mexico", "Wollo Sefer"],
       "Lideta": ["Merkato", "Addis Ketema", "Taitu"],
       "Arada": ["Piazza", "Sidist Kilo", "Shiro Meda"],

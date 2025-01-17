@@ -44,12 +44,11 @@ export default function MedicineDetail() {
     <div className="container ">
       <div className="lg:px-[15%] mt-24 text-gray-700  grid md:grid-cols-2 gap-4 lg:gap-8">
         <div className="">
-          <h3 className="text-2xl md:text-3xl font-bold text-black">
+          <h3 className="text-3xl md:text-4xl font-bold mb-8">
             {medicine?.name}
           </h3>
           <span className="text-gray-800 font-semibold">Antibiotics</span>
           <p className="mb-6">{medicine?.description}</p>
-          <Button>Search</Button>
         </div>
           <div>
             <img

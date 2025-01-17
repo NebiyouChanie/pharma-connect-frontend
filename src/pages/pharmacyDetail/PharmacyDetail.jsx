@@ -155,7 +155,7 @@ export default function PharmacyDetail() {
   }
 
   if (!pharmacy) {
-    return <p>Loading pharmacy details...</p>;
+    return 
   }
 
 
@@ -168,19 +168,19 @@ export default function PharmacyDetail() {
 
 
   return (
-    <div className="container lg:px-24 xl:px-40 mb-24">
-      <div className="flex justify-between items-center mt-20 mb-10">
+    <div className="container lg:px-24  mb-24">
+      <div className="flex justify-between items-center mt-10 mb-10">
         <h3 className="text-3xl md:text-4xl  font-bold text-black  ">
           {pharmacy.name}
         </h3>
         <div>
         {   user?.role === "owner" || user?.role === "pharmacist" ?
             <div>
-              <Button variant="outline">
                 <Link to={`/pharmacy-profile/${id}/update`}>
+              <Button variant="outline">
                   Update profile
-                </Link>
               </Button>
+                </Link>
             </div>:
             <div>
             <Button> <Phone /> <a href={`tel:${pharmacy.contactNumber}`}>Call</a></Button>

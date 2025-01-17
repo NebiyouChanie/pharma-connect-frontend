@@ -9,15 +9,18 @@ import SearchResultsCard from "./searchResultsCard/SearchResultsCard";
 import LocationFilter from "../../components/LocatioListDropDown";
 import { toast } from "react-toastify";
 import { useNavigate } from 'react-router-dom';
-
+import Footer from '@/components/Footer';
 import { BASE_URL } from "@/lib/utils";
 import { NearbyCarousel } from "@/components/NearbyCarousel";
+import Cookies from 'universal-cookie';
 
+const cookies = new Cookies();
 export default function SearchResults() {
   const location = useLocation();
   const { searchQuery: initialSearchQuery } = location.state || {};
   const { updateSearchResults } = useSearchContext();
   const navigate = useNavigate();
+  const user = cookies.get('user');
   
 
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || "");
@@ -227,13 +230,15 @@ const filterPharmaciesNearMe = () => {
       pharmacy.distance=distance
       pharmacy.time=distance*2
 
-      return distance <=2; // Only include pharmacies within 5 km
+      const distanceInKm=Math.round((distance / 4) * 60)
+
+      return distanceInKm<=10; // Only include pharmacies within 5 km
     }
     return false; // Skip pharmacies without valid coordinates
   });
 
   if (nearbyPharmacies.length === 0) {
-    toast.info("No pharmacies found within 5 km radius.");
+    toast.info("No pharmacies found within 10 km radius.");
     setDisplayedResults([]); // Clear displayed results
   } else {
     setDisplayedResults(nearbyPharmacies); // Update displayed results
@@ -244,7 +249,9 @@ const filterPharmaciesNearMe = () => {
 
 
   return (
-    <div className="container">
+    <div>
+
+    <div className="container min-h-screen">
       {/* search */}
       <div className="flex w-full max-w-sm items-center mt-20">
         <Input
@@ -252,7 +259,7 @@ const filterPharmaciesNearMe = () => {
           placeholder="Search"
           value={inputQuery}
           onChange={(e) => setInputQuery(e.target.value)}
-        />
+          />
         <Button type="button" onClick={handleSearchInput}>
           Search
         </Button>
@@ -301,8 +308,8 @@ const filterPharmaciesNearMe = () => {
               ) : (
                 displayedResults?.map((result, index) => (
                   <SearchResultsCard
-                    key={index}
-                    pharmacyName={result.pharmacyName}
+                  key={index}
+                  pharmacyName={result.pharmacyName}
                     address={result.address}
                     distance={result.distance}
                     time={result.time}
@@ -310,12 +317,14 @@ const filterPharmaciesNearMe = () => {
                     pharmacyId={result.pharmacyId}
                     inventoryId={result.inventoryId}
                     image={result.photo}
-                  />
-                ))
-              )}
+                    />
+                  ))
+                )}
             </div>
 
       </div>}
+    </div>
+    {!user?.role!="user" && <Footer/>}
     </div>
   );
 }

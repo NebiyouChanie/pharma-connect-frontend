@@ -9,55 +9,53 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
-export default function SearchResultsCard({pharmacyName, address, price, distance, time,pharmacyId,medicineId,medicineName,inventoryId,isCart,image}) {
+export default function SearchResultsCard({pharmacyName, address, price, distance, time, pharmacyId, medicineId, medicineName, inventoryId, isCart, image}) {
   const user = cookies.get('user');
 
   const token = localStorage.getItem("authToken");  
-  const navigate = useNavigate()
-  const handleAddToMyMedicines = async() => {
+  const navigate = useNavigate();
 
-    const data = {inventoryId: inventoryId}
+  const handleAddToMyMedicines = async () => {
+    const data = {inventoryId: inventoryId};
     try {
-        if(!user){
-          toast.error("Sign in to save searched Pharmacies.")
-          return
-        }
+      if (!user) {
+        toast.error("Sign in to save searched Pharmacies.");
+        return;
+      }
 
-        const response = await fetch(`${BASE_URL}/users/addtocart`,{
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json", 
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(data), 
-        }
-        )
-        toast.success("Pharmacy and Medicine saved in MY Medicines.");
-      } catch (error) {
-        toast.error("Something went wrong. Please try again.");
-        console.log(error)
+      const response = await fetch(`${BASE_URL}/users/addtocart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", 
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(data), 
+      });
+      toast.success("Pharmacy and Medicine saved in MY Medicines.");
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+      console.log(error);
     }
-  }
-  
-  const handleRemoveFromMyMedicines = async() => {
-    const data = {pharmacyId: pharmacyId, medicineId:medicineId}
+  };
+
+  const handleRemoveFromMyMedicines = async () => {
+    const data = {pharmacyId: pharmacyId, medicineId: medicineId};
     try {
-        const response = await fetch(`${BASE_URL}/users/my-medicines`,{
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json", 
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify(data), 
-        }
-        )
-        navigate(0)
-        toast.success("Pharmacy and Medicine Removed from MY Medicines.");
-      } catch (error) {
-        toast.error("Something went wrong. Please try again.");
-        console.log(error)
+      const response = await fetch(`${BASE_URL}/users/my-medicines`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json", 
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify(data), 
+      });
+      navigate(0);
+      toast.success("Pharmacy and Medicine Removed from MY Medicines.");
+    } catch (error) {
+      toast.error("Something went wrong. Please try again.");
+      console.log(error);
     }
-  }
+  };
 
   return (
     <Card className="w-full md:w-[47%] shadow-md border-gray-300 grid grid-cols-2 overflow-hidden">
@@ -67,7 +65,7 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
           src={image}
           alt="pharmacy entrance"
           className="h-full w-full object-cover col-span-1"
-          />
+        />
       </div>
 
       {/* Content Section */}
@@ -86,21 +84,20 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
 
         {/* Distance and Time */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
-          <span className="flex  gap-2">
-          {!medicineName && (
-          <p className="font-medium">
-            Around {Math.round((time / 4) * 60)} "Min" | {Math.round((distance / 4) * 60)} "Km"
-          </p>
-          )}
-
-           </span>
+          <span className="flex gap-2">
+            {!medicineName && (
+              <p className="font-medium">
+                Around {Math.round((time / 4) * 60)} Min | {Math.round((distance / 4) * 60)} Km
+              </p>
+            )}
+          </span>
         </div>
 
         {/* Price */}
         <span className="font-semibold text-gray-800">Br {price}</span>
 
         {/* Footer Section */}
-        <CardFooter className="flex justify-between  pt-2 p-0 ">
+        <CardFooter className="flex justify-between pt-2 p-0">
           <Link
             to={`/pharmacy-profile/${pharmacyId}`}
             className="text-blue-700 underline text-sm"
@@ -109,6 +106,7 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
           </Link>
 
           {/* Add/Remove Button */}
+          {(!user || user?.role === "user") && (
           <div>
             {!isCart ? (
               <Button
@@ -126,6 +124,7 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
               </Button>
             )}
           </div>
+        )}
         </CardFooter>
       </CardContent>
     </Card>

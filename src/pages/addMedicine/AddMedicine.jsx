@@ -9,6 +9,7 @@ import ImageUpload from '../../components/ImageUpload'; // Import the ImageUploa
 import { Textarea } from '@/components/ui/textarea';
 import { BASE_URL } from "@/lib/utils";
 import {toast} from "react-toastify";
+import { useState } from "react";
 
 
 
@@ -22,6 +23,7 @@ const formSchema = z.object({
 });
 
 function AddMedicine() {
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,6 +37,7 @@ function AddMedicine() {
  
    const onSubmit = async (data) => {
       try {
+        setIsSubmitting(true)
         const response = await fetch(`${BASE_URL}/medicines`, {
           method: 'POST',
           headers: {
@@ -57,13 +60,15 @@ function AddMedicine() {
         // Handle network or unexpected errors
         toast.error("Something went wrong. Please try again.");
         console.error("Error Details:", error);
+      }finally {
+        setIsSubmitting(false)
       }
     };
     
 
   return (
     <div className="container py-16">
-      <h1 className="text-4xl font-bold mb-4">Add Medicine to the platform</h1>
+      <h1 className="text-3xl md:text-4xl font-bold mb-8">Add Medicine to the platform</h1>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
     <div className='grid gap-8 md:grid-cols-2 md:gap-32 items-center'>
@@ -137,7 +142,9 @@ function AddMedicine() {
               </div>
 
           </div>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={isSubmitting} className="w-fit">
+                {isSubmitting ? "Adding Medicine..." : "Add Medicine"}
+            </Button>
           </form>
         </Form>
     </div>
