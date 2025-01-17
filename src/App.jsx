@@ -30,6 +30,7 @@ import UpdateInventoryMedicine from "./pages/updateInventoryMedicine/UpdateInven
 import UpdateMedicine from "./pages/updateMedicine/UpdateMedicine";
 import PharmacistsList from "./pages/pharmacistList/PharmacistsList";
 import MyMedicines from "./pages/myMedicines/MyMedicines";
+import Footer from "./components/Footer";
 
  
 

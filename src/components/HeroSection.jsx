@@ -22,7 +22,7 @@ function HeroSection() {
   return (
     <div className='flex flex-col md:flex-row gap-8 md:justify-between md:items-center mt-8'>
       <div className='max-w-[90%] md:max-w-[50%] xl:max-w-[605px]'>
-        <h1 className='font-bold text-3xl md:text-4xl lg:text-5xl xl:text-6xl'>
+        <h1 className='font-bold text-4xl lg:text-5xl xl:text-6xl mt-4'>
           Find medicines, compare prices, and <span className='text-primary'>check availability</span> instantly.
         </h1>
         <form onSubmit={handleSearch} className="flex w-full max-w-sm items-center mt-8">

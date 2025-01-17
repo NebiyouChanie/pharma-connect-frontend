@@ -9,6 +9,7 @@ import {useNavigate} from 'react-router-dom'
 
 function MyMedicines() {
   const [myMedicines, setMyMedicines] =useState()
+  console.log("🚀 ~ file: MyMedicines.jsx:12 ~ MyMedicines ~ myMedicines:", myMedicines)
   const isCart= true;
   const token = localStorage.getItem("authToken");  
   const navigate = useNavigate()
@@ -76,6 +77,8 @@ function MyMedicines() {
               price={result.price}
               pharmacyId={result.pharmacyId}
               medicineId={result.medicineId}
+              medicineName={result.medicineName}
+              image={result.photo}
               isCart
               />
             ))

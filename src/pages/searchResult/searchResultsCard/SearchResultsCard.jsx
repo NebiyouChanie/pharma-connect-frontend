@@ -8,9 +8,9 @@ import {useNavigate} from 'react-router-dom'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
-const user = cookies.get('user');
 
-export default function SearchResultsCard({pharmacyName, address, price, distance, time,pharmacyId,medicineId,inventoryId,isCart}) {
+export default function SearchResultsCard({pharmacyName, address, price, distance, time,pharmacyId,medicineId,medicineName,inventoryId,isCart,image}) {
+  const user = cookies.get('user');
 
   const token = localStorage.getItem("authToken");  
   const navigate = useNavigate()
@@ -62,17 +62,20 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
   return (
     <Card className="w-full md:w-[47%] shadow-md border-gray-300 grid grid-cols-2 overflow-hidden">
       {/* Image Section */}
-      <img
-        src=""
-        alt="pharmacy entrance"
-        className="h-full w-full object-cover col-span-1"
-      />
+      <div className="max-h-48">
+        <img
+          src={image}
+          alt="pharmacy entrance"
+          className="h-full w-full object-cover col-span-1"
+          />
+      </div>
 
       {/* Content Section */}
       <CardContent className="col-span-1 p-4 flex flex-col gap-2">
         {/* Pharmacy Name */}
         <CardHeader className="p-0">
           <CardTitle className="font-bold text-start text-lg sm:text-xl">{pharmacyName}</CardTitle>
+          <CardTitle className="text-start text-sm text-gray-600">{medicineName}</CardTitle>
         </CardHeader>
 
         {/* Address */}
@@ -83,9 +86,14 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
 
         {/* Distance and Time */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
-          <span className="flex items-center gap-1">
-            <p className="font-medium">Around</p> {Math.round((time / 4) * 60)} Min | {Math.round((distance / 4) * 60)} Km
-          </span>
+          <span className="flex  gap-2">
+          {!medicineName && (
+          <p className="font-medium">
+            Around {Math.round((time / 4) * 60)} "Min" | {Math.round((distance / 4) * 60)} "Km"
+          </p>
+          )}
+
+           </span>
         </div>
 
         {/* Price */}

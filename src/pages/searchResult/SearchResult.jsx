@@ -309,6 +309,7 @@ const filterPharmaciesNearMe = () => {
                     price={result.price}
                     pharmacyId={result.pharmacyId}
                     inventoryId={result.inventoryId}
+                    image={result.photo}
                   />
                 ))
               )}
