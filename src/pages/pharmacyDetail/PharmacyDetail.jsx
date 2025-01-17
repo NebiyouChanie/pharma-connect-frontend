@@ -249,9 +249,17 @@ export default function PharmacyDetail() {
 
       </div>
 
-        <Button variant="outline" className="self-start">
+      <Button 
+          variant="outline" 
+          className="self-start"
+          onClick={() => {
+            const googleMapsUrl = `https://www.google.com/maps?q=${pharmacy.latitude},${pharmacy.longitude}&ll=${pharmacy.latitude},${pharmacy.longitude}&z=15`; 
+            window.open(googleMapsUrl, "_blank"); // Opens the Google Maps link in a new tab
+          }}
+        >
           Open in Google Maps
         </Button>
+
       
      {
       user?.role === "owner" || user?.role === "pharmacist" ?
