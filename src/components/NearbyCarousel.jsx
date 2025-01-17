@@ -18,33 +18,35 @@ export function NearbyCarousel({ pharmacies }) {
       className="w-full overflow-hidden" // Prevent horizontal scrolling
     >
       <CarouselContent className="flex w-full">
-        {pharmacies.map((pharmacy, index) => (
-          <Link
-          to={`/pharmacy-profile/${pharmacy.pharmacyId}`}
-          >
-          <CarouselItem 
-            key={index} 
-            className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/6" // Full width for mobile
-          >
-            <div className="p-2">
-              <Card>
-                <CardContent
-                  className="flex aspect-square items-center justify-center p-6 rounded relative"
-                  style={{
-                    backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.1)), url(${pharmacy.pharmacyImage})`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                  >
-                  <p className="absolute bottom-4 left-4 text-white text-lg font-semibold">
-                    {pharmacy.name.length > 15 ? pharmacy.name.substring(0, 15) + "..." : pharmacy.name}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-          </Link>
-        ))}
+        {pharmacies.map((pharmacy, index) => {
+          console.log("🚀 ~ file: NearbyCarousel.jsx:48 ~ NearbyCarousel ~ pharmacy:", pharmacy)
+          return <Link
+          	to={`/pharmacy-profile/${pharmacy.pharmacyId}`}
+          	>
+          	<CarouselItem
+            	key={index}
+            	className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/6" // Full width for mobile
+          	>
+            	<div className="p-2">
+              	<Card>
+                	<CardContent
+                  	className="flex aspect-square items-center justify-center p-6 rounded relative"
+                  	style={{
+                    	backgroundImage: `linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.1)), url(${pharmacy.pharmacyImage})`,
+                    	backgroundSize: "cover",
+                    	backgroundPosition: "center",
+                  	}}
+                  	>
+                  	<p className="absolute bottom-4 left-4 text-white text-lg font-semibold">
+                    	{pharmacy.name.length > 15 ? pharmacy.name.substring(0, 15) + "..." : pharmacy.name}
+                  	</p>
+                	</CardContent>
+              	</Card>
+            	</div>
+          	</CarouselItem>
+          	</Link>
+        	))}
+        })
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />
