@@ -7,6 +7,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { Link } from "react-router-dom";
 
 export function NearbyCarousel({ pharmacies }) {
   return (
@@ -18,6 +19,9 @@ export function NearbyCarousel({ pharmacies }) {
     >
       <CarouselContent className="flex w-full">
         {pharmacies.map((pharmacy, index) => (
+          <Link
+          to={`/pharmacy-profile/${pharmacy.pharmacyId}`}
+          >
           <CarouselItem 
             key={index} 
             className="basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/6" // Full width for mobile
@@ -31,7 +35,7 @@ export function NearbyCarousel({ pharmacies }) {
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                   }}
-                >
+                  >
                   <p className="absolute bottom-4 left-4 text-white text-lg font-semibold">
                     {pharmacy.name.length > 15 ? pharmacy.name.substring(0, 15) + "..." : pharmacy.name}
                   </p>
@@ -39,6 +43,7 @@ export function NearbyCarousel({ pharmacies }) {
               </Card>
             </div>
           </CarouselItem>
+          </Link>
         ))}
       </CarouselContent>
       <CarouselPrevious />
