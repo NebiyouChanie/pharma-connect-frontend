@@ -32,6 +32,7 @@ export default function SearchResults() {
   const [inputQuery, setInputQuery] = useState()
   const [resultsFor, setResultsFor] = useState()
   
+  console.log(searchedResult)
   // Request user location
 const requestLocation = () => {
     if (!navigator.geolocation) {
@@ -83,6 +84,7 @@ const requestLocation = () => {
       }
       
       const data = await response.json();
+      // console.log(data)
       updateSearchResults(data);
     } catch (error) {
       console.error("Error fetching search results:", error);
@@ -98,6 +100,7 @@ const requestLocation = () => {
 
   useEffect(() => {
     if (searchQuery) {
+      // console.log(searchQuery)
       setResultsFor(searchQuery)
       fetchResults(searchQuery);
     }

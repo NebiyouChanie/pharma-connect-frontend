@@ -21,6 +21,7 @@ import  ImageModal  from "@/components/Modal";
 import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
+import { set } from "react-hook-form";
 // Set default Leaflet icon configuration
 const DefaultIcon = L.icon({
   iconUrl: markerIcon,
@@ -101,12 +102,15 @@ export default function PharmacyDetail() {
       const response = await fetch(BASE_URL + `/pharmacies/${id}`);
       const pharmacyJson = await response.json();
       const pharmacyData = pharmacyJson.data;
+
+      const lat = pharmacyData.latitude
+      const lng = pharmacyData.longitude 
+      setCoordinates({lat,lng})
       setPharmacy(pharmacyData);
     } catch (error) {
       console.error("Error loading pharmacy details:", error.message);
     }
   };
-
   useEffect(() => {
       async function fetchData() {
         try {
@@ -122,6 +126,7 @@ export default function PharmacyDetail() {
             medicineId: item.medicine,
             inventoryId: item._id,
             pharmacyId: item.pharmacy,
+            
           }));
           setData(formattedData);
         } catch (err) {
