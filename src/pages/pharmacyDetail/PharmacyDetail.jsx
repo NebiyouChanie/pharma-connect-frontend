@@ -193,18 +193,20 @@ export default function PharmacyDetail() {
           {pharmacy.name}
         </h3>
         <div>
-        {   user?.role === "owner" || user?.role === "pharmacist" ?
-            <div>
-                <Link to={`/pharmacy-profile/${id}/update`}>
+        {(user?.role === "owner" || user?.role === "pharmacist") && pharmacy?.ownerId === user?.id ? (
+          <div>
+            <Link to={`/pharmacy-profile/${id}/update`}>
               <Button variant="outline">
-                  Update profile
+                Update profile
               </Button>
-                </Link>
-            </div>:
-            <div>
+            </Link>
+          </div>
+        ) : (
+          <div>
             <Button> <Phone /> <a href={`tel:${pharmacy.contactNumber}`}>Call</a></Button>
           </div>
-      }
+        )}
+
         </div>
       </div>
       
