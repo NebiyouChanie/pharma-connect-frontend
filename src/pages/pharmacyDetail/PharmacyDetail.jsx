@@ -235,7 +235,7 @@ export default function PharmacyDetail() {
             </div>
                         
             <div className="flex items-center gap-4 my-8">
-              <p className="font-medium text-gray-700">Distance :</p> Around {Math.fround(distance)} KM{" "}
+              <p className="font-medium text-gray-700">Distance :</p> Around {Math.round(distance*10)/10} KM{" "}
               <span className="flex gap-1 items-center font-semibold">
                 <Clock className="w-4 h-4" />~{Number(Math.round(distance))*3}{" "}
                 Min

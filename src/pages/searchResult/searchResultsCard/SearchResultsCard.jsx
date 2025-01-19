@@ -87,7 +87,7 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
           <span className="flex gap-2">
             {!medicineName && (
               <p className="font-medium">
-                Around {Number(Math.round(time))} Min | {Number(Math.fround(distance))} Km
+                Around {Number(Math.round(time))} Min | {Number(Math.round(distance*10)/10)} Km
               </p>
             )}
           </span>
