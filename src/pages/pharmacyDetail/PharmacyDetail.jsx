@@ -232,7 +232,7 @@ export default function PharmacyDetail() {
             <div className="flex items-center gap-4 my-8">
               <p className="font-medium text-gray-700">Distance :</p> Around {distance.toFixed(2)} KM{" "}
               <span className="flex gap-1 items-center font-semibold">
-                <Clock className="w-4 h-4" />~{distance*3}{" "}
+                <Clock className="w-4 h-4" />~{distance.toFixed(0)*3}{" "}
                 Min
               </span>
             </div>
