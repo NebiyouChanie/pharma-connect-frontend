@@ -235,11 +235,8 @@ const filterPharmaciesNearMe = () => {
         pharmacy.longitude
       );
       pharmacy.distance=distance
-      pharmacy.time=distance*2
-
-      const distanceInKm=Math.round((distance / 4) * 60)
-
-      return distanceInKm<=5; // Only include pharmacies within 5 km
+      pharmacy.time=distance*3
+      return distance<=5; // Only include pharmacies within 5 km
     }
     return false; // Skip pharmacies without valid coordinates
   });
