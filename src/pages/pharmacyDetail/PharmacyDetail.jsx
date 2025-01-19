@@ -65,13 +65,7 @@ const cookies = new Cookies();
 //   return null;
 // }
 
-function AutoFocusMarker({ position }) {
-  const map = useMap();
-  if (position) {
-    map.setView(position, map.getZoom());
-  }
-  return null;
-}
+ 
 
 export default function PharmacyDetail() {
   const { id } = useParams();
