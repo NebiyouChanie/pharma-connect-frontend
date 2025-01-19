@@ -18,6 +18,37 @@ import Cookies from 'universal-cookie';
 import { Link } from "react-router-dom";
 import { Phone } from "lucide-react";
 import  ImageModal  from "@/components/Modal";
+import L from "leaflet";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
+// Set default Leaflet icon configuration
+const DefaultIcon = L.icon({
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+});
+L.Marker.prototype.options.icon = DefaultIcon;
+
+// Map click handler component
+function MapClickHandler({ setCoordinates }) {
+  useMapEvents({
+    click: (e) => {
+      const { lat, lng } = e.latlng;
+      setCoordinates({ lat, lng });
+    },
+  });
+  return null;
+}
+
+// Autofocus marker when coordinates change
+function AutoFocusMarker({ position }) {
+  const map = useMap();
+  if (position) {
+    map.setView(position, map.getZoom());
+  }
+  return null;
+}
 
 const cookies = new Cookies();
 
@@ -237,14 +268,16 @@ export default function PharmacyDetail() {
         />
         {/* Fixed Marker */}
         <Marker position={[coordinates.lat, coordinates.lng]}>
-          <Popup>
-            <strong>Predefined Location</strong>
-            <br />
-            Latitude: {coordinates.lat}
-            <br />
-            Longitude: {coordinates.lng}
-          </Popup>
-        </Marker>
+                    <Popup>
+                      <strong>Selected Location</strong>
+                      <br />
+                      Latitude: {coordinates.lat}
+                      <br />
+                      Longitude: {coordinates.lng}
+                    </Popup>
+                  </Marker>
+                  <MapClickHandler setCoordinates={setCoordinates} />
+                  <AutoFocusMarker position={[coordinates.lat, coordinates.lng]} />
       </MapContainer>
 
       </div>
