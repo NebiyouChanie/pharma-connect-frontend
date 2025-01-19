@@ -10,8 +10,8 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
 export default function SearchResultsCard({pharmacyName, address, price, distance, time, pharmacyId, medicineId, medicineName, inventoryId, isCart, image}) {
+ 
   const user = cookies.get('user');
-
   const token = localStorage.getItem("authToken");  
   const navigate = useNavigate();
 
@@ -77,7 +77,7 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
         </CardHeader>
 
         {/* Address */}
-        <div className="flex items-center text-sm text-gray-600 gap-2">
+        <div className="flex text-sm text-gray-600 gap-2">
           <MapPin className="w-4 h-4" />
           <span>{address}</span>
         </div>
@@ -87,7 +87,7 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
           <span className="flex gap-2">
             {!medicineName && (
               <p className="font-medium">
-                Around {Math.round((time / 4) * 60)} Min | {Math.round((distance / 4) * 60)} Km
+                Around {time} Min | {distance.toFixed(2)} Km
               </p>
             )}
           </span>
