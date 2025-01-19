@@ -161,7 +161,7 @@ const requestLocation = () => {
             pharmacy.latitude,
             pharmacy.longitude
           );
-          return { ...pharmacy, distance, time: distance * 2 };
+          return { ...pharmacy, distance, time: distance * 3 };
         }
         return pharmacy;
       });
@@ -236,13 +236,13 @@ const filterPharmaciesNearMe = () => {
 
       const distanceInKm=Math.round((distance / 4) * 60)
 
-      return distanceInKm<=10; // Only include pharmacies within 5 km
+      return distanceInKm<=5; // Only include pharmacies within 5 km
     }
     return false; // Skip pharmacies without valid coordinates
   });
 
   if (nearbyPharmacies.length === 0) {
-    toast.info("No pharmacies found within 10 km radius.");
+    toast.info("No pharmacies found within 5 km radius.");
     setDisplayedResults([]); // Clear displayed results
   } else {
     setDisplayedResults(nearbyPharmacies); // Update displayed results
