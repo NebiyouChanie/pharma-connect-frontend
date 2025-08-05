@@ -11,7 +11,7 @@ import { useLocationContext } from "@/context/locationContext";
 
 const cookies = new Cookies();
 
-export default function SearchResultsCard({pharmacyName, address, price, distance, time, pharmacyId, medicineId, medicineName, inventoryId, isCart, image, onLocationUpdate}) {
+export default function SearchResultsCard({pharmacyName, address, price, distance, time, pharmacyId, medicineId, medicineName, inventoryId, isCart, image, onLocationUpdate, showLocation = true}) {upda
  
   const user = cookies.get('user');
   const token = localStorage.getItem("authToken");  
@@ -147,60 +147,62 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
           <span>{address}</span>
         </div>
 
-        {/* Distance and Time */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
-          <span className="flex gap-2">
-                         {distance !== undefined && distance !== null && time !== undefined && time !== null ? (
-               <div>
-                 <p className="font-medium text-green-600">
-                   Around {Number(Math.round(time))} Min | {Number(Math.round(distance*10)/10)} Km
-                 </p>
-               </div>
-             ) : (
-              <div className="space-y-2">
-                                                   <button
+        {/* Distance and Time - Only show if showLocation is true */}
+        {showLocation && (
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
+            <span className="flex gap-2">
+              {distance !== undefined && distance !== null && time !== undefined && time !== null ? (
+                <div>
+                  <p className="font-medium text-green-600">
+                    Around {Number(Math.round(time))} Min | {Number(Math.round(distance*10)/10)} Km
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <button
                     className="text-blue-600 hover:text-blue-800 underline text-xs"
                     onClick={() => {
                       requestLocation();
                     }}
                     disabled={isLocationLoading}
                   >
-                   {isLocationLoading ? "Getting location..." : "Enable location to see distance"}
-                 </button>
-                
-                {showManualLocation && (
-                  <div className="mt-2 p-2 bg-gray-50 rounded text-xs">
-                    <p className="text-gray-600 mb-2">Alternative: Get your coordinates from <a href="https://www.latlong.net/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">latlong.net</a></p>
-                    <div className="flex gap-2">
-                      <input
-                        type="number"
-                        placeholder="Latitude"
-                        value={manualLatitude}
-                        onChange={(e) => setManualLatitude(e.target.value)}
-                        className="flex-1 px-2 py-1 border rounded text-xs"
-                        step="any"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Longitude"
-                        value={manualLongitude}
-                        onChange={(e) => setManualLongitude(e.target.value)}
-                        className="flex-1 px-2 py-1 border rounded text-xs"
-                        step="any"
-                      />
-                      <button
-                        onClick={handleManualLocationSet}
-                        className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
-                      >
-                        Set
-                      </button>
+                    {isLocationLoading ? "Getting location..." : "Enable location to see distance"}
+                  </button>
+                  
+                  {showManualLocation && (
+                    <div className="mt-2 p-2 bg-gray-50 rounded text-xs">
+                      <p className="text-gray-600 mb-2">Alternative: Get your coordinates from <a href="https://www.latlong.net/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">latlong.net</a></p>
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          placeholder="Latitude"
+                          value={manualLatitude}
+                          onChange={(e) => setManualLatitude(e.target.value)}
+                          className="flex-1 px-2 py-1 border rounded text-xs"
+                          step="any"
+                        />
+                        <input
+                          type="number"
+                          placeholder="Longitude"
+                          value={manualLongitude}
+                          onChange={(e) => setManualLongitude(e.target.value)}
+                          className="flex-1 px-2 py-1 border rounded text-xs"
+                          step="any"
+                        />
+                        <button
+                          onClick={handleManualLocationSet}
+                          className="px-2 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700"
+                        >
+                          Set
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </span>
-        </div>
+                  )}
+                </div>
+              )}
+            </span>
+          </div>
+        )}
 
         {/* Price */}
         <span className="font-semibold text-gray-800">Br {price}</span>

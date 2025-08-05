@@ -79,19 +79,20 @@ function MyMedicines() {
             ) : !myMedicines.length && token ? (
               <p className='text-gray-600'>You haven't saved any medicine yet.</p>
             ) : (
-              myMedicines?.map((result, index) => (
-                <SearchResultsCard
-                key={index}
-                pharmacyName={result.pharmacyName}
-                address={result.address}
-                price={result.price}
-                pharmacyId={result.pharmacyId}
-                medicineId={result.medicineId}
-                medicineName={result.medicineName}
-                image={result.photo}
-                isCart
-                />
-              ))
+                        myMedicines?.map((result, index) => (
+            <SearchResultsCard
+              key={index}
+              pharmacyName={result.pharmacyName}
+              address={result.address}
+              price={result.price}
+              pharmacyId={result.pharmacyId}
+              medicineId={result.medicineId}
+              medicineName={result.medicineName}
+              image={result.photo}
+              isCart
+              showLocation={false}
+            />
+          ))
             )}
           </div>
       </div>
