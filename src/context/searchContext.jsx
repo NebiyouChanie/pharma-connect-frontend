@@ -15,6 +15,7 @@ export const SearchProvider = ({ children }) => {
     
     // Function to update the search results
     const updateSearchResults = (results) => {
+        console.log("Updating search results in context:", results);
         setSearchResults(results);
     };
 
@@ -24,6 +25,7 @@ export const SearchProvider = ({ children }) => {
 
     // Function to update the user location
     const updateUserLocation = (location) => {
+        console.log("Updating user location in context:", location);
         setUserLocation(location);
     };
 
