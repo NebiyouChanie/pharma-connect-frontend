@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import {useNavigate} from 'react-router-dom'
 import Footer from '@/components/Footer';
 import Cookies from 'universal-cookie';
+import { SkeletonCard } from "@/components/ui/skeleton";
 
 
 const cookies = new Cookies();
@@ -68,9 +69,14 @@ function MyMedicines() {
           </div>
           <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
             <Separator />
-            {!token && <p className='text-gray-600'>Please log in to save searched medicines and pharmacies.</p>
-            }
-            {!myMedicines?.length && token  ? (
+            {!token && <p className='text-gray-600'>Please log in to save searched medicines and pharmacies.</p>}
+            {myMedicines === undefined ? (
+              <div className="flex flex-col gap-6 my-8 w-full">
+                {[...Array(4)].map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            ) : !myMedicines.length && token ? (
               <p className='text-gray-600'>You haven't saved any medicine yet.</p>
             ) : (
               myMedicines?.map((result, index) => (
@@ -78,8 +84,6 @@ function MyMedicines() {
                 key={index}
                 pharmacyName={result.pharmacyName}
                 address={result.address}
-                distance={result.distance}
-                time={result.time}
                 price={result.price}
                 pharmacyId={result.pharmacyId}
                 medicineId={result.medicineId}

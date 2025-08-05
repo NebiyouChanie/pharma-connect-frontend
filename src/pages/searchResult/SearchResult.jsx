@@ -13,6 +13,7 @@ import Cookies from 'universal-cookie';
 import LocationFilter from "../../components/LocatioListDropDown";
 import PriceRangeDropdown from "../../components/PriceRangeDropdown";
 import SearchResultsCard from "./searchResultsCard/SearchResultsCard";
+import { SkeletonCard } from "@/components/ui/skeleton";
 
 const cookies = new Cookies();
 export default function SearchResults() {
@@ -42,6 +43,7 @@ export default function SearchResults() {
   const [suggestionTimeout, setSuggestionTimeout] = useState(null);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const { getSearchedResults } = useSearchContext();
   const { 
@@ -107,6 +109,7 @@ export default function SearchResults() {
   // Fetch search results
   async function fetchResults(query) {
     try {
+      setLoading(true);
       const requestBody = {
         medicineName: query
       };
@@ -160,15 +163,18 @@ export default function SearchResults() {
       if (data.status === 'error') {
         toast.error(data.message || "An error occurred while searching");
         setDisplayedResults([]);
+        setLoading(false);
         return;
       }
       
       // Set results directly since distance/time are calculated on backend
       setDisplayedResults(data.data);
       updateSearchResults(data);
+      setLoading(false);
     } catch (error) {
       toast.error("Network error. Please check your connection and try again.");
       setDisplayedResults([]);
+      setLoading(false);
     }
   }
 
@@ -555,34 +561,37 @@ const filterPharmaciesNearMe = () => {
             </div>
 
 
-            <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
-              {!displayedResults?.length ? (
-                <p>No results found</p>
-              ) : (
-                <>
-                  <p className="text-sm text-gray-600">Found {displayedResults.length} results</p>
-                  <Separator />
-                  {displayedResults?.map((result, index) => {
-                    console.log("Rendering result:", result);
-                    return (
-                      <SearchResultsCard
+            {/* Results List */}
+            {loading ? (
+              <div className="flex flex-col gap-6 my-8">
+                {[...Array(4)].map((_, i) => (
+                  <SkeletonCard key={i} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-8 md:flex-row flex-wrap mb-80">
+                <Separator />
+                {displayedResults.length === 0 ? (
+                  <p className='text-gray-600'>No results found.</p>
+                ) : (
+                  displayedResults.map((result, index) => (
+                    <SearchResultsCard
                       key={index}
                       pharmacyName={result.pharmacyName}
-                        address={result.address}
-                        distance={result.distance}
-                        time={result.time}
-                        price={result.price}
-                        pharmacyId={result.pharmacyId}
-                        inventoryId={result.inventoryId}
-                        image={result.photo}
-                        medicineName={result.medicineName}
-                        onLocationUpdate={handleLocationUpdate}
-                        />
-                    );
-                  })}
-                </>
-              )}
-            </div>
+                      address={result.address}
+                      distance={result.distance}
+                      time={result.time}
+                      price={result.price}
+                      pharmacyId={result.pharmacyId}
+                      medicineId={result.medicineId}
+                      medicineName={result.medicineName}
+                      image={result.photo}
+                      onLocationUpdate={handleLocationUpdate}
+                    />
+                  ))
+                )}
+              </div>
+            )}
 
       </div>}
     </div>
