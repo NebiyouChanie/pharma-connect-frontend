@@ -22,6 +22,7 @@ import SignupForm from "./pages/auth/SignUP/SignUp";
 import SignInForm from "./pages/auth/SignIn/SignIn";
 
 import { SearchProvider } from "./context/searchContext";
+import { LocationProvider } from "./context/locationContext";
 import ApprovePage from "./pages/approvePage/ApprovePage";
 import SignUpPharmacistForm from "./pages/auth/SignUpPharmacist/SignUpPharmacist";
 import ApplicationDetail from "./pages/applicationDetail/ApplicationDetail";
@@ -38,9 +39,10 @@ function App() {
   
   return (
 
-    <SearchProvider>
-    
-    <Router>
+    <LocationProvider>
+      <SearchProvider>
+      
+      <Router>
       <ToastContainer
       autoClose={2000} 
       position="top-center"
@@ -87,8 +89,9 @@ function App() {
 
         {/* other routes*/}
       </Routes>
-    </Router>
-  </SearchProvider>
+      </Router>
+    </SearchProvider>
+  </LocationProvider>
 
   );
 }

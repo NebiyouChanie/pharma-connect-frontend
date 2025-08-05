@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useSearchContext } from "@/context/searchContext";
+import { useLocationContext } from "@/context/locationContext";
 import { BASE_URL } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -20,6 +21,17 @@ export default function SearchResults() {
   const { updateSearchResults } = useSearchContext();
   const navigate = useNavigate();
   const user = cookies.get('user');
+
+  // Safety check to prevent rendering before context is ready
+  const [isContextReady, setIsContextReady] = useState(false);
+  
+  useEffect(() => {
+    // Small delay to ensure context is properly initialized
+    const timer = setTimeout(() => {
+      setIsContextReady(true);
+    }, 100);
+    return () => clearTimeout(timer);
+  }, []);
   
 
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery || "");
@@ -31,11 +43,41 @@ export default function SearchResults() {
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
-  const { getSearchedResults,userLocation, updateUserLocation: contextUpdateUserLocation } = useSearchContext();
+  const { getSearchedResults } = useSearchContext();
+  const { 
+    userLocation, 
+    updateUserLocation: contextUpdateUserLocation, 
+    requestLocation: contextRequestLocation,
+    hasLocation,
+    isLocationLoading,
+    locationError,
+    getLocationStatus,
+    getLocationType
+  } = useLocationContext();
   const searchedResult = getSearchedResults();
-  const [inputQuery, setInputQuery] = useState()
-  const [resultsFor, setResultsFor] = useState()
+  const [inputQuery, setInputQuery] = useState(initialSearchQuery || "")
+  const [resultsFor, setResultsFor] = useState(initialSearchQuery || "")
   
+  // Auto-search when component mounts with a search query
+  useEffect(() => {
+    if (initialSearchQuery) {
+      setInputQuery(initialSearchQuery);
+      setResultsFor(initialSearchQuery);
+      
+      // Wait a bit for any existing location to be available, then search
+      setTimeout(() => {
+        fetchResults(initialSearchQuery);
+      }, 100);
+    }
+  }, [initialSearchQuery]);
+
+  // Re-search when location becomes available (if we have a search query)
+  useEffect(() => {
+    if (inputQuery && userLocation && userLocation.latitude && userLocation.longitude) {
+      fetchResults(inputQuery);
+    }
+  }, [userLocation, inputQuery]);
+
   // Remove the complex distance calculation useEffect and related logic
   // The backend now handles all distance calculations
 
@@ -44,84 +86,58 @@ export default function SearchResults() {
   // Remove the custom updateUserLocation function and forceUpdate logic
   // Simplify to just use the context updateUserLocation
 
-  console.log(searchedResult)
-  console.log("Current userLocation:", userLocation);
-  console.log("Current displayedResults:", displayedResults);
-  console.log("Current suggestions:", suggestions);
-  console.log("Show suggestions:", showSuggestions);
-  console.log("Loading suggestions:", loadingSuggestions);
-  // Request user location
-const requestLocation = () => {
-    console.log("Requesting location...");
-    if (!navigator.geolocation) {
-        toast.error("Geolocation is not supported by your browser.");
-        return;
+
+  // Request user location using the dedicated context
+  const requestLocation = async () => {
+    try {
+      await contextRequestLocation();
+      toast.success("Location access granted! Re-searching with distance calculations.");
+      
+      // If we have a search query, re-search with the new location
+      if (inputQuery) {
+        setTimeout(() => {
+          fetchResults(inputQuery);
+        }, 200);
+      }
+    } catch (error) {
+      toast.error(locationError || "Failed to get location. Please try again.");
     }
-
-    // Add timeout and high accuracy options
-    const options = {
-        enableHighAccuracy: true,
-        timeout: 10000, // 10 seconds
-        maximumAge: 300000 // 5 minutes
-    };
-
-    navigator.geolocation.getCurrentPosition(
-    (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log("Location obtained:", { latitude, longitude });
-        contextUpdateUserLocation({ latitude, longitude }); // Update location in context
-        toast.success("Location access granted!");
-    },
-    (error) => {
-        console.error("Location error:", error);
-        if (error.code === error.PERMISSION_DENIED) {
-            toast.error(
-                "Location access denied. Please enable location services in your browser settings."
-            );
-        } else if (error.code === error.TIMEOUT) {
-            toast.error("Request for location timed out. Please try again.");
-        } else {
-            toast.error("An unknown error occurred while fetching location.");
-        }
-    },
-    options
-);
-};
+  };
   
   // Fetch search results
   async function fetchResults(query) {
     try {
-      console.log("Searching for:", query);
-      console.log("Current user location:", userLocation);
-      
-      // Get the latest location from context to ensure we have the most up-to-date location
-      const currentLocation = userLocation;
-      
       const requestBody = {
         medicineName: query
       };
 
-      // Add user location if available
-      if (currentLocation.latitude && currentLocation.longitude) {
-        requestBody.userLatitude = currentLocation.latitude;
-        requestBody.userLongitude = currentLocation.longitude;
-        console.log("✅ Including user location in search request:", { latitude: currentLocation.latitude, longitude: currentLocation.longitude });
-      } else {
-        console.log("❌ No user location available, searching without distance calculation");
+      // Always try to get the best available location
+      let currentLocation = userLocation;
+      
+      // If we don't have location, try to get it (this will use fallback if needed)
+      if (!hasLocation()) {
+        try {
+          currentLocation = await contextRequestLocation({ useFallback: true });
+        } catch (error) {
+          // Silently handle location errors
+        }
       }
 
-      console.log("🔍 Full request body:", requestBody);
+      // Add user location if available
+      if (currentLocation && currentLocation.latitude && currentLocation.longitude) {
+        requestBody.userLatitude = currentLocation.latitude;
+        requestBody.userLongitude = currentLocation.longitude;
+      }
 
-      const response = await fetch(`${BASE_URL}/search`, {
+            const response = await fetch(`${BASE_URL}/search`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(requestBody),
       });
-      
+
       const data = await response.json();
-      console.log("Search results for", query, ":", data);
       
       if (!response.ok) {
         if (response.status === 400) {
@@ -142,7 +158,6 @@ const requestLocation = () => {
       }
       
       if (data.status === 'error') {
-        console.error("API error:", data);
         toast.error(data.message || "An error occurred while searching");
         setDisplayedResults([]);
         return;
@@ -152,7 +167,6 @@ const requestLocation = () => {
       setDisplayedResults(data.data);
       updateSearchResults(data);
     } catch (error) {
-      console.error("Error fetching search results:", error);
       toast.error("Network error. Please check your connection and try again.");
       setDisplayedResults([]);
     }
@@ -160,10 +174,7 @@ const requestLocation = () => {
 
   // Fetch medicine suggestions
   async function fetchSuggestions(query) {
-    console.log("Fetching suggestions for:", query);
-    
     if (!query || query.trim().length < 2) {
-      console.log("Query too short, clearing suggestions");
       setSuggestions([]);
       setShowSuggestions(false);
       setLoadingSuggestions(false);
@@ -173,24 +184,16 @@ const requestLocation = () => {
     setLoadingSuggestions(true);
     try {
       const url = `${BASE_URL}/medicines/suggestions?q=${encodeURIComponent(query)}`;
-      console.log("Fetching from URL:", url);
       
       const response = await fetch(url);
-      console.log("Suggestions response status:", response.status);
       
       if (response.ok) {
         const data = await response.json();
-        console.log("Suggestions data:", data);
         setSuggestions(data.data || []);
         setShowSuggestions(true);
-      } else {
-        console.error("Suggestions API error:", response.status, response.statusText);
-        const errorData = await response.json().catch(() => ({}));
-        console.error("Error data:", errorData);
       }
     } catch (error) {
-      console.error("Error fetching suggestions:", error);
-      // Don't show error toast for suggestions as it's not critical
+      // Silently handle suggestion errors
     } finally {
       setLoadingSuggestions(false);
     }
@@ -198,15 +201,11 @@ const requestLocation = () => {
 
   // Debounced suggestion function
   const debouncedFetchSuggestions = (query) => {
-    console.log("Debounced function called with:", query);
-    
     if (suggestionTimeout) {
-      console.log("Clearing previous timeout");
       clearTimeout(suggestionTimeout);
     }
     
     const timeout = setTimeout(() => {
-      console.log("Timeout executed, calling fetchSuggestions");
       fetchSuggestions(query);
     }, 300); // 300ms delay
     
@@ -216,7 +215,6 @@ const requestLocation = () => {
   // Handle input change with suggestions
   const handleInputChange = (e) => {
     const value = e.target.value;
-    console.log("Input changed to:", value);
     setInputQuery(value);
     setSelectedSuggestionIndex(-1); // Reset selected index when typing
     debouncedFetchSuggestions(value);
@@ -306,41 +304,27 @@ const requestLocation = () => {
   // Price filter
   const handleFilter = (range) => {
     setSelectedRange(range);
-    const filteredMedicine = searchedResult
-      .filter(
-        (pharmacy) => pharmacy.price >= range[0] && pharmacy.price <= range[1]
-      )
-      .map((pharmacy) => {
-        if (userLocation.latitude && userLocation.longitude) {
-          const distance = calculateDistance(
-            userLocation.latitude,
-            userLocation.longitude,
-            pharmacy.latitude,
-            pharmacy.longitude
-          );
-          return { ...pharmacy, distance, time: distance * 3 };
-        }
-        return pharmacy;
-      });
+    if (!searchedResult || searchedResult.length === 0) {
+      return;
+    }
+    
+    const filteredMedicine = searchedResult.filter(
+      (pharmacy) => pharmacy.price >= range[0] && pharmacy.price <= range[1]
+    );
+    
     setDisplayedResults(filteredMedicine);
   };
 
   // filter by location
   const handleLocationFilter = ({ subcity, part }) => {
-    const filteredResults = searchedResult
-      .filter((pharmacy) => pharmacy.address.split(",").includes(part))
-      .map((pharmacy) => {
-        if (userLocation.latitude && userLocation.longitude) {
-          const distance = calculateDistance(
-            userLocation.latitude,
-            userLocation.longitude,
-            pharmacy.latitude,
-            pharmacy.longitude
-          );
-          return { ...pharmacy, distance, time: distance * 3 };
-        }
-        return pharmacy;
-      });
+    if (!searchedResult || searchedResult.length === 0) {
+      return;
+    }
+    
+    const filteredResults = searchedResult.filter((pharmacy) => 
+      pharmacy.address.toLowerCase().includes(part.toLowerCase())
+    );
+    
     setDisplayedResults(filteredResults);
   };
 
@@ -368,35 +352,22 @@ const [nearBypharmacies, setNearBypharmacies] = useState([]);
  
 // handle "Near Me" functionality
 const filterPharmaciesNearMe = () => {
-  if (!userLocation || !userLocation.latitude || !userLocation.longitude) {
+  if (!hasLocation()) {
     toast.error("Please allow location access first.");
     requestLocation();
     return;
   }
 
   if (!searchedResult || searchedResult.length === 0) {
-    toast.info("No search results to filter.");
     return;
   }
 
-  // Filter pharmacies within 5 km radius
+  // Filter pharmacies within 5 km radius using existing distance data
   const nearbyPharmacies = searchedResult.filter((pharmacy) => {
-    if (pharmacy.latitude && pharmacy.longitude) {
-      const distance = calculateDistance(
-        userLocation.latitude,
-        userLocation.longitude,
-        pharmacy.latitude,
-        pharmacy.longitude
-      );
-      pharmacy.distance=distance
-      pharmacy.time=distance*3
-      return distance<=5; // Only include pharmacies within 5 km
-    }
-    return false; // Skip pharmacies without valid coordinates
+    return pharmacy.distance && pharmacy.distance <= 5; // Only include pharmacies within 5 km
   });
 
   if (nearbyPharmacies.length === 0) {
-    toast.info("No pharmacies found within 5 km radius.");
     setDisplayedResults([]); // Clear displayed results
   } else {
     setDisplayedResults(nearbyPharmacies); // Update displayed results
@@ -417,47 +388,24 @@ const filterPharmaciesNearMe = () => {
     }
   };
 
-  // Test API accessibility
-  const testAPI = async () => {
-    try {
-      console.log("Testing API accessibility...");
-      const response = await fetch(`${BASE_URL}/medicines`);
-      console.log("API test response:", response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log("API test data:", data);
-      }
-    } catch (error) {
-      console.error("API test error:", error);
-    }
-  };
 
-  // Test API on component mount
-  useEffect(() => {
-    testAPI();
-  }, []);
 
-  // Add test function to window for debugging
-  useEffect(() => {
-    window.testSearchWithLocation = async (medicineName = "paracetamol") => {
-      console.log("🧪 Testing search with location for:", medicineName);
-      const testLocation = { latitude: 9.03, longitude: 38.74 };
-      contextUpdateUserLocation(testLocation);
-      setInputQuery(medicineName);
-      setResultsFor(medicineName);
-      
-      // Wait for location to be set in context before searching
-      setTimeout(async () => {
-        console.log("🧪 Location set, now searching...");
-        await fetchResults(medicineName);
-      }, 100);
-    };
-    
-    return () => {
-      delete window.testSearchWithLocation;
-    };
-  }, []);
 
+
+
+
+
+  // Show loading while context is initializing
+  if (!isContextReady) {
+    return (
+      <div className="container min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin inline-block w-8 h-8 border-2 border-gray-300 border-t-blue-600 rounded-full mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -533,12 +481,12 @@ const filterPharmaciesNearMe = () => {
       <div>
           {/* results for and filter buttons */}
           <div className="my-4">
-            <h2 className=" font-bold text-2xl mb-4">Results for: <span className="text-primary">{resultsFor}</span></h2>
+            {/* <h2 className=" font-bold text-2xl mb-4">Results for: <span className="text-primary">{resultsFor}</span></h2> */}
             <div className="flex flex-wrap gap-2 md:gap-8 mb-5">
               <PriceRangeDropdown onSelect={handleFilter} />
               <LocationFilter onSelect={handleLocationFilter} />
               <Button variant="outline" className="border-foregorund text-gray-700" onClick={filterPharmaciesNearMe}>
-                Near Me
+                Near Me (Within 5km)
               </Button>
             </div>
           </div>
@@ -546,36 +494,64 @@ const filterPharmaciesNearMe = () => {
 
           {/* results section */}
           <div className="flex items-center gap-4">
-              {!userLocation.latitude || !userLocation.longitude ? (
-                    <div className="flex flex-wrap gap-4 mb-4">
-                       <p className="text-red-600">
-                       Enable your location to view the estimated distance and travel time to each pharmacy.
-                       </p>
-                        <Button variant="outline" className='h-fit py-1 px-2' onClick={requestLocation}>
-                          Allow Location
-                        </Button>
-                      </div>
-                    ) : (
-                      <div className="mb-4">
-                        <p className="text-green-600 font-medium">
-                          ✓ Location enabled - Distance and travel time will be shown
+              {(() => {
+                const status = getLocationStatus();
+                const type = getLocationType();
+                
+                switch (status) {
+                                     case 'loading':
+                     return (
+                       <div className="flex flex-wrap gap-4 mb-4">
+                         <p className="text-blue-600">
+                           Getting your location...
+                         </p>
+                       </div>
+                     );
+                  
+                                     case 'available':
+                     return (
+                       <div className="mb-4">
+                         <p className={`font-medium ${type === 'approximate' ? 'text-green-600' : 'text-green-600'}`}>
+                           Location enabled - Distance and travel time will be shown
+                           {type === 'approximate' && ' (approximate location)'}
+                         </p>
+                       </div>
+                     );
+                  
+                                     case 'denied':
+                     return (
+                       <div className="flex flex-wrap gap-4 mb-4">
+                         <p className="text-red-600">
+                           Location access denied. Please enable location in your browser settings.
+                         </p>
+                         <Button 
+                           variant="outline" 
+                           className='h-fit py-1 px-2' 
+                           onClick={() => requestLocation({ force: true })}
+                         >
+                           Try Again
+                         </Button>
+                       </div>
+                     );
+                  
+                  default:
+                    return (
+                      <div className="flex flex-wrap gap-4 mb-4">
+                        <p className="text-gray-600">
+                          Enable your location to view the estimated distance and travel time to each pharmacy.
                         </p>
                         <Button 
                           variant="outline" 
-                          className='h-fit py-1 px-2 mt-2' 
-                          onClick={() => {
-                            console.log("Manual test: Re-searching with current location");
-                            if (inputQuery) {
-                              fetchResults(inputQuery);
-                            } else {
-                              toast.error("Please search for a medicine first");
-                            }
-                          }}
+                          className='h-fit py-1 px-2' 
+                          onClick={requestLocation}
+                          disabled={isLocationLoading}
                         >
-                          Test Search with Location
+                          {isLocationLoading ? "Getting Location..." : "Enable Location"}
                         </Button>
                       </div>
-                    )}
+                    );
+                }
+              })()}
             </div>
 
 
@@ -600,7 +576,6 @@ const filterPharmaciesNearMe = () => {
                         inventoryId={result.inventoryId}
                         image={result.photo}
                         medicineName={result.medicineName}
-                        updateUserLocation={contextUpdateUserLocation}
                         onLocationUpdate={handleLocationUpdate}
                         />
                     );

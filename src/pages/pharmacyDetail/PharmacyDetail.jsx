@@ -3,8 +3,6 @@ import {
   Marker,
   Popup,
   TileLayer,
-  useMap,
-  useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Clock } from "lucide-react";
@@ -22,6 +20,7 @@ import L from "leaflet";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { set } from "react-hook-form";
+import { useLocationContext } from "@/context/locationContext";
 // Set default Leaflet icon configuration
 const DefaultIcon = L.icon({
   iconUrl: markerIcon,
@@ -31,25 +30,7 @@ const DefaultIcon = L.icon({
 });
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Map click handler component
-function MapClickHandler({ setCoordinates }) {
-  useMapEvents({
-    click: (e) => {
-      const { lat, lng } = e.latlng;
-      setCoordinates({ lat, lng });
-    },
-  });
-  return null;
-}
 
-// Autofocus marker when coordinates change
-function AutoFocusMarker({ position }) {
-  const map = useMap();
-  if (position) {
-    map.setView(position, map.getZoom());
-  }
-  return null;
-}
 
 const cookies = new Cookies();
 
@@ -72,9 +53,11 @@ export default function PharmacyDetail() {
   const { id } = useParams();
   const [coordinates, setCoordinates] = useState({ lat: 9.03, lng: 38.74 });
   const [pharmacy, setPharmacy] = useState(null);
-  const [position, setPosition] = useState({ lat: null, lng: null });
   const [distance, setDistance] = useState(0);
+  const [time, setTime] = useState(0);
   const [data, setData] = useState([]);
+  
+  const { userLocation, hasLocation, requestLocation } = useLocationContext();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalImage, setModalImage] = useState("");
@@ -103,9 +86,9 @@ export default function PharmacyDetail() {
       const pharmacyJson = await response.json();
       const pharmacyData = pharmacyJson.data;
 
-      const lat = pharmacyData.latitude
-      const lng = pharmacyData.longitude 
-      setCoordinates({lat,lng})
+      const lat = parseFloat(pharmacyData.latitude);
+      const lng = parseFloat(pharmacyData.longitude);
+      setCoordinates({ lat, lng });
       setPharmacy(pharmacyData);
     } catch (error) {
       console.error("Error loading pharmacy details:", error.message);
@@ -130,7 +113,7 @@ export default function PharmacyDetail() {
           }));
           setData(formattedData);
         } catch (err) {
-          console.log(err)
+          // Silently handle errors
         }  
       }
       fetchData();
@@ -138,35 +121,25 @@ export default function PharmacyDetail() {
 
   useEffect(() => {
     loadPharmacyDetail(id);
-    const watchId = navigator.geolocation.watchPosition(
-      (position) => {
-        setPosition({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        });
-      },
-      (error) => {
-        console.error("Error watching location:", error.message);
-      }
-    );
-    return () => navigator.geolocation.clearWatch(watchId);
   }, [id]);
+
+
 
   useEffect(() => {
     if (
-      position.lat &&
-      position.lng &&
+      userLocation?.latitude &&
+      userLocation?.longitude &&
       pharmacy?.latitude &&
       pharmacy?.longitude
     ) {
       calculateDistance(
-        position.lat,
-        position.lng,
+        userLocation.latitude,
+        userLocation.longitude,
         pharmacy.latitude,
         pharmacy.longitude
       );
     }
-  }, [position, pharmacy]);
+  }, [userLocation, pharmacy]);
 
   function calculateDistance(lat1, lng1, lat2, lng2) {
     const toRadians = (degree) => (degree * Math.PI) / 180;
@@ -180,8 +153,10 @@ export default function PharmacyDetail() {
         Math.sin(dLng / 2) *
         Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c;
-    setDistance(distance);
+    const calculatedDistance = R * c;
+    const calculatedTime = Math.round(calculatedDistance * 3); // 3 minutes per km, rounded
+    setDistance(calculatedDistance);
+    setTime(calculatedTime);
   }
 
   if (!pharmacy) {
@@ -234,12 +209,27 @@ export default function PharmacyDetail() {
               {renderDetailRow("Zip Code", pharmacy.zipCode)}
             </div>
                         
-            <div className="flex items-center gap-4 my-8">
-              <p className="font-medium text-gray-700">Distance :</p> Around {Math.round(distance*10)/10} KM{" "}
-              <span className="flex gap-1 items-center font-semibold">
-                <Clock className="w-4 h-4" />~{Number(Math.round(distance))*3}{" "}
-                Min
-              </span>
+                         <div className="flex items-center gap-4 my-8">
+               {hasLocation() && distance > 0 ? (
+                 <>
+                   <p className="font-medium text-gray-700">Distance:</p> 
+                   <span>Around {Number(Math.round(distance*10)/10)} KM</span>
+                   <span className="flex gap-1 items-center font-semibold">
+                     <Clock className="w-4 h-4" />
+                     ~{time} Min
+                   </span>
+                 </>
+               ) : (
+                <div className="flex items-center gap-4">
+                  <p className="font-medium text-gray-700">Distance:</p>
+                  <button
+                    className="text-blue-600 hover:text-blue-800 underline text-sm"
+                    onClick={() => requestLocation()}
+                  >
+                    Enable location to see distance
+                  </button>
+                </div>
+              )}
             </div>
 
           </div>
@@ -255,28 +245,29 @@ export default function PharmacyDetail() {
 
       </div>
       <div className="mb-8">
-      <MapContainer
-        center={[coordinates.lat, coordinates.lng]}
-        zoom={13}
-        scrollWheelZoom={false}
-        style={{ width: "100%", height: "400px", zIndex: -1 }}
-      >
+             <MapContainer
+         center={[coordinates.lat, coordinates.lng]}
+         zoom={15}
+         scrollWheelZoom={true}
+         style={{ width: "100%", height: "400px" }}
+         key={`${coordinates.lat}-${coordinates.lng}`}
+       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {/* Fixed Marker */}
-        <Marker position={[coordinates.lat, coordinates.lng]}>
-                    <Popup>
-                      <strong>Selected Location</strong>
-                      <br />
-                      Latitude: {coordinates.lat}
-                      <br />
-                      Longitude: {coordinates.lng}
-                    </Popup>
-                  </Marker>
-                  <MapClickHandler setCoordinates={setCoordinates} />
-                  <AutoFocusMarker position={[coordinates.lat, coordinates.lng]} />
+                          {/* Pharmacy Location Marker */}
+         <Marker position={[coordinates.lat, coordinates.lng]}>
+           <Popup>
+             <strong>{pharmacy?.name || 'Pharmacy Location'}</strong>
+             <br />
+             Address: {pharmacy?.address}
+             <br />
+             Latitude: {coordinates.lat}
+             <br />
+             Longitude: {coordinates.lng}
+           </Popup>
+         </Marker>
       </MapContainer>
 
       </div>

@@ -7,10 +7,11 @@ import { BASE_URL } from "@/lib/utils";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Cookies from 'universal-cookie';
+import { useLocationContext } from "@/context/locationContext";
 
 const cookies = new Cookies();
 
-export default function SearchResultsCard({pharmacyName, address, price, distance, time, pharmacyId, medicineId, medicineName, inventoryId, isCart, image, updateUserLocation, onLocationUpdate}) {
+export default function SearchResultsCard({pharmacyName, address, price, distance, time, pharmacyId, medicineId, medicineName, inventoryId, isCart, image, onLocationUpdate}) {
  
   const user = cookies.get('user');
   const token = localStorage.getItem("authToken");  
@@ -19,91 +20,37 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
   const [showManualLocation, setShowManualLocation] = useState(false);
   const [manualLatitude, setManualLatitude] = useState('');
   const [manualLongitude, setManualLongitude] = useState('');
-  const [isLocationLoading, setIsLocationLoading] = useState(false);
+  
+  const { 
+    updateUserLocation, 
+    requestLocation: contextRequestLocation,
+    isLocationLoading,
+    locationError,
+    getLocationStatus,
+    getLocationType
+  } = useLocationContext();
 
-  // Debug logging for props
-  useEffect(() => {
-    console.log("SearchResultsCard props:", {
-      pharmacyName,
-      distance,
-      time,
-      medicineName,
-      hasUpdateUserLocation: !!updateUserLocation,
-      hasOnLocationUpdate: !!onLocationUpdate
-    });
-  }, [pharmacyName, distance, time, medicineName, updateUserLocation, onLocationUpdate]);
 
-  // Additional debug logging for distance/time specifically
-  useEffect(() => {
-    console.log(`🔍 ${pharmacyName}: distance=${distance}, time=${time}`);
-  }, [pharmacyName, distance, time]);
 
-  const requestLocation = () => {
-    setIsLocationLoading(true);
-    console.log("Requesting location...");
-    
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser.");
-      setShowManualLocation(true);
-      setIsLocationLoading(false);
-      return;
+    const requestLocation = async () => {
+    try {
+      await contextRequestLocation();
+      toast.success("Location enabled! Refreshing search results with distance calculations.");
+      
+      // Trigger new search with location
+      if (onLocationUpdate) {
+        setTimeout(() => {
+          onLocationUpdate();
+        }, 500);
+      }
+    } catch (error) {
+      toast.error(locationError || "Failed to get location. Please try again.");
+      
+      // Show manual location option for POSITION_UNAVAILABLE error
+      if (error.code === 2) {
+        setShowManualLocation(true);
+      }
     }
-
-    const options = {
-      enableHighAccuracy: true,
-      timeout: 15000, // 15 seconds
-      maximumAge: 300000 // 5 minutes
-    };
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        console.log("✅ Location obtained successfully:", position.coords);
-        const { latitude, longitude } = position.coords;
-        
-        // Update user location in context
-        if (updateUserLocation) {
-          updateUserLocation({ latitude, longitude });
-          console.log("✅ User location updated in context");
-        }
-        
-        // Show success message
-        toast.success("Location enabled! Refreshing search results with distance calculations.");
-        
-                 // Trigger new search with location
-         if (onLocationUpdate) {
-           console.log("✅ Triggering location update callback");
-           setTimeout(() => {
-             onLocationUpdate();
-           }, 500); // Reduced delay but still enough for context update
-         }
-        
-        setIsLocationLoading(false);
-      },
-      (error) => {
-        console.error("❌ Location error:", error);
-        setIsLocationLoading(false);
-        
-        let errorMessage = "Failed to get location. Please try again.";
-        
-        switch (error.code) {
-          case 1: // PERMISSION_DENIED
-            errorMessage = "Location access denied. Please allow location access in your browser settings and refresh the page.";
-            break;
-          case 2: // POSITION_UNAVAILABLE
-            errorMessage = "Location unavailable. Please check your internet connection or try manual location.";
-            setShowManualLocation(true);
-            break;
-          case 3: // TIMEOUT
-            errorMessage = "Location request timed out. Please try again.";
-            break;
-          default:
-            errorMessage = "Failed to get location. Please try again.";
-        }
-        
-        toast.error(errorMessage);
-      },
-      options
-    );
   };
 
   const handleManualLocationSet = () => {
@@ -120,8 +67,6 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
       return;
     }
 
-    console.log("✅ Setting manual location:", { lat, lng });
-    
     if (updateUserLocation) {
       updateUserLocation({ latitude: lat, longitude: lng });
     }
@@ -156,7 +101,6 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
       toast.success("Pharmacy and Medicine saved in MY Medicines.");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
-      console.log(error);
     }
   };
 
@@ -175,7 +119,6 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
       toast.success("Pharmacy and Medicine Removed from MY Medicines.");
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
-      console.log(error);
     }
   };
 
@@ -207,25 +150,23 @@ export default function SearchResultsCard({pharmacyName, address, price, distanc
         {/* Distance and Time */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm text-gray-600 gap-2">
           <span className="flex gap-2">
-            {distance !== undefined && distance !== null && time !== undefined && time !== null ? (
-              <div>
-                <p className="font-medium text-green-600">
-                  ✅ Around {Number(Math.round(time))} Min | {Number(Math.round(distance*10)/10)} Km
-                </p>
-                <p className="text-xs text-gray-500">Distance calculated from your location</p>
-              </div>
-            ) : (
+                         {distance !== undefined && distance !== null && time !== undefined && time !== null ? (
+               <div>
+                 <p className="font-medium text-green-600">
+                   Around {Number(Math.round(time))} Min | {Number(Math.round(distance*10)/10)} Km
+                 </p>
+               </div>
+             ) : (
               <div className="space-y-2">
-                <button
-                  className="text-blue-600 hover:text-blue-800 underline text-xs"
-                  onClick={() => {
-                    console.log("Location button clicked");
-                    requestLocation();
-                  }}
-                  disabled={isLocationLoading}
-                >
-                  {isLocationLoading ? "Loading..." : "Enable location to see distance"}
-                </button>
+                                                   <button
+                    className="text-blue-600 hover:text-blue-800 underline text-xs"
+                    onClick={() => {
+                      requestLocation();
+                    }}
+                    disabled={isLocationLoading}
+                  >
+                   {isLocationLoading ? "Getting location..." : "Enable location to see distance"}
+                 </button>
                 
                 {showManualLocation && (
                   <div className="mt-2 p-2 bg-gray-50 rounded text-xs">
